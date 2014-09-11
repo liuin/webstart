@@ -114,13 +114,7 @@ var fc = {
 
 $(document).ready(function() {
 	//dong something
-	fc.anim($("#p1"),'fadeOut');
 })
 
 
 
-function testAnim(x) {
-	$('#animationSandbox').removeClass().addClass(x + ' animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-	  $(this).removeClass();
-	});
-};
