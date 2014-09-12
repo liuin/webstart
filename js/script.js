@@ -111,28 +111,39 @@ var fc = {
 		});
 	  },
 	  scollUp:function  (obj,speed) {
+			var MyMar = 0;
 			var scolldiv = obj.find(".scolldiv");
 			var objclone = obj.find(".scolldiv").clone();
 			objclone.appendTo(obj);
 			function Marquee() {
-				  
-				 if(objclone.offset().top - obj.offset().top <=0)
+				 if(objclone.offset().top - obj.offset().top <=0){
 						obj.scrollTop(0);
-				   else{
-					   var k = obj.scrollTop();
-					   obj.scrollTop(k+1);
+				   }else{
+					   if ((obj.scrollTop())%(objclone.height()/2) == 0) {
+							clearInterval(MyMar);
+							setTimeout(
+							    function(){
+									clearInterval(MyMar);
+									MyMar=setInterval(Marquee,speed);
+							    }, 3000)
+
+					   }
+							var k = obj.scrollTop();
+						    obj.scrollTop(k+1);
 				   }
 			}
 
-			 var MyMar=setInterval(Marquee,speed);
+			 MyMar=setInterval(Marquee,speed);
+
 			 obj.hover(function  () {
 				clearInterval(MyMar);
 			 },function  () {
+				clearInterval(MyMar);
 				MyMar=setInterval(Marquee,speed);
 			 })
-			  obj.onmouseover=function() {clearInterval(MyMar)}
-			  obj.onmouseout=function() {MyMar=setInterval(Marquee,speed)}
+			  
 		}
+
 }
 
 
