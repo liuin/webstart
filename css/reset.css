@@ -547,7 +547,7 @@ table {
 }
 
 .fl {float:left; display:inline;}
-.fr {float:left; display:inline;}
+.fr {float:right; display:inline;}
 .none {display:none;}
 .v-h {visibility:hidden;}
 .textb{white-space:normal;word-wrap:break-word;word-break:break-all;}
