@@ -1,0 +1,21 @@
+/*-- box_rotate  --*/
+
+@-webkit-keyframes road {
+  0% {-webkit-transform:rotate(0deg);}
+  100% {-webkit-transform:rotate(360deg);} 
+}
+
+@keyframes road {
+  0% {transform:rotate(0deg);}
+  100% {transform:rotate(360deg);} 
+}
+
+
+.road {
+  -webkit-animation-duration: 20s;
+  animation-duration: 20s;
+  -webkit-animation-delay: 0s;
+  -webkit-animation-timing-function:linear;
+  -webkit-animation-name: road;
+          animation-name: road;
+}
