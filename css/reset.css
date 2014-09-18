@@ -553,7 +553,7 @@ table {
 .textb{white-space:normal;word-wrap:break-word;word-break:break-all;}
 .textep {overflow:hidden;text-overflow: ellipsis;white-space: nowrap;}
 .unselect{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-o-user-select:none;user-select:none;}
-.yh {font-family:"\5FAE\8F6F\96C5\9ED1","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;}
+.yh {font-family:"Microsoft YaHei","微软雅黑","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;}
 .st {font-family:"\5B8B\4F53","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;}
 .ht {font-family:"\9ED1\4F53","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;}
 .ar {font-family:"Arial","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;}

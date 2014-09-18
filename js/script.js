@@ -1,28 +1,5 @@
 var fc = {
-		//绝对定位
-		dataPosAb: function  (obj) {
-			var getVal = obj.data("pos-ab").split(",");
-			var setCss ={
-				"position":"absolute",
-				"width":parseInt(getVal[0]),
-				"height":parseInt(getVal[1]),
-				"top":parseInt(getVal[2]),
-				"left":parseInt(getVal[3]),
-				"visibility":"visible"
-			}
-			obj.css(setCss);
-		},
-		ie6: function  () {
-			var isIe6 = false;
-			if (/msie/.test(navigator.userAgent.toLowerCase())) {
-				if (jQuery.browser && jQuery.browser.version && jQuery.browser.version == '6.0') {
-					isIe6 = true
-				} else if (!$.support.leadingWhitespace) {
-					isIe6 = true;
-				}
-			}
-			return isIe6;
-		},
+		
 		dataFormType: function  (obj,ind) {
 			var gVal = obj.data("form-type");
 			
@@ -109,40 +86,8 @@ var fc = {
 				callBack();
 			}
 		});
-	  },
-	  scollUp:function  (obj,speed) {
-			var MyMar = 0;
-			var scolldiv = obj.find(".scolldiv");
-			var objclone = obj.find(".scolldiv").clone();
-			objclone.appendTo(obj);
-			function Marquee() {
-				 if(objclone.offset().top - obj.offset().top <=0){
-						obj.scrollTop(0);
-				   }else{
-					   if ((obj.scrollTop())%(objclone.height()/2) == 0) {
-							clearInterval(MyMar);
-							setTimeout(
-							    function(){
-									clearInterval(MyMar);
-									MyMar=setInterval(Marquee,speed);
-							    }, 3000)
-
-					   }
-							var k = obj.scrollTop();
-						    obj.scrollTop(k+1);
-				   }
-			}
-
-			 MyMar=setInterval(Marquee,speed);
-
-			 obj.hover(function  () {
-				clearInterval(MyMar);
-			 },function  () {
-				clearInterval(MyMar);
-				MyMar=setInterval(Marquee,speed);
-			 })
-			  
-		}
+	  }
+	  
 
 }
 
