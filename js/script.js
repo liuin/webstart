@@ -1,47 +1,5 @@
 var fc = {
-		
-		dataFormType: function  (obj,ind) {
-			var gVal = obj.data("form-type");
-			
-			switch (gVal) {
-			case 'select':
-				obj.css("opacity","0");	    
-				obj.wrap("<span class='selectstyle'></span>");
-				var gettxt = '<span class="val textb" style="display:inline-block;">'+obj.find("option:eq(0)").html()+'</span>';
-				
-				gettxt = $(gettxt);
-				
-				
-				gettxt.insertBefore(obj);
-				gettxt.width(obj.width());
-				obj.parents(".selectstyle").width(obj.width()).addClass("select-"+ind);
-				
-				obj.bind("change changeval",function  () {
-					var vl = $(this).find("option:selected").html();
-					$(this).prev('.val').html(vl);
-				})
 
-				obj.trigger('changeval');
-						
-			break
-			case 'radio':
-				var setCss = {
-					"opacity":"0",
-					"position":"absolute"
-				}
-				obj.css(setCss);
-				var idiv = $('<i></i>');
-				idiv.insertBefore(obj);
-				obj.parent("label").css("position","relative");
-				obj.bind("change changeval",function  () {
-					
-						$(this).parent("label").addClass("ck-select").siblings("label").removeClass("ck-select");
-					
-				});
-			break
-			default:
-			}
-		},
 
 	  popbk:{
 		init:function  (obj,i) {

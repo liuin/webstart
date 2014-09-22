@@ -78,7 +78,56 @@ if ($(this).parents('.img_small').length > 0 && $(this).find('li').length < 6) {
 			obj_width+=$(this).outerWidth();
 		});
 		longk = obj_width;
-		$(this).css({'position':'absolute','width':obj_width});		
+		$(this).css({'position':'absolute','width':obj_width});	
+		
+
+		//moblie tounch手机事件
+		var currntp = 0;
+		var pageX = 0;
+		var ifchlick = false;
+			
+			$("."+opts.wrapClass).bind("touchstart",function  (e) {
+				
+				currntp = window.event.touches[0].pageX;
+				ifchlick = true;
+				e.preventDefault();
+			});
+
+		   $("."+opts.wrapClass).bind('touchend', function(e) {
+			   if (pageX == 0) {
+				   return false;
+			   }
+			   e.preventDefault();
+				ifchlick = false;
+				var width_step = 10;
+				//alert(currntp+','+pageX);
+				
+				if ((Math.abs(currntp - pageX) >= width_step)) {
+					if (currntp - pageX >= width_step) {
+						arrow_next.trigger('click','one');
+						
+						//$(".show-pic .prev").trigger('click');
+					} else {
+						
+						arrow_prev.trigger('click','one');
+						//$(".show-pic .next").trigger('click');
+					}
+					
+				}
+				currntp = 0;
+				pageX = 0;
+				
+			});
+
+			$("."+opts.wrapClass).bind('touchmove', function(e) {
+				e.preventDefault();
+				if (ifchlick) {
+					ifchlick = false;
+					pageX = window.event.targetTouches[0].pageX;					
+				}else {
+					return false;
+				}
+			});
 		
 		//点击显示大图
 		
@@ -94,11 +143,15 @@ if ($(this).parents('.img_small').length > 0 && $(this).find('li').length < 6) {
 
 			if(ifload == true || $(this).parent().hasClass('current')){ return false;}
 			idbox = obj.find(opts.sdiv+'.current').index();
-			var idnow = $(this).parent().index();
-			if (idbox>idnow) {
-				arrow_prev.trigger('click');
-			}else {
-				arrow_next.trigger('click');
+			
+			if ((idbox!= -1) && (idbox!= 0) && (idbox!= (obj.find(opts.sdiv).length-1))) {
+
+				var idnow = $(this).parent().index();
+				if (idbox>idnow) {
+					arrow_prev.trigger('click');
+				}else {
+					arrow_next.trigger('click');
+				}
 			}
 
 			$(this).parent().siblings('li').removeClass('current');
@@ -711,7 +764,7 @@ jQuery.extend(jQuery.easing, {
 		objshow: $(this).find('.mysp-tagbox-section'),
 		taglink: $(this).find('.mysp-taglink a'),
 		current_class: 'active'
-	}); 
+	});
 
 */
 +(function($){  
@@ -754,7 +807,9 @@ jQuery.extend(jQuery.easing, {
 	};  
 })(jQuery);
 
-//刮刮看代码
+/** 
+* extend 刮刮看代码
+*/
 function  guagua() {
 	//$("#canvas1").remove();
 	//$(".content-box").append('<canvas id="canvas1" style=" background-repeat:no-repeat; background-position:center center;" />');
@@ -865,22 +920,37 @@ img.src = hideimg;
 }
 
 
+/** 
+* extend 绝对定位
+* @author cuki13
+*/
++(function($){  
+	$.fn.posab = function (options) {
+		var obj=$(this);
+		var defualts = {
+		};
+		var opts = $.extend({}, defualts, options);  
 
-//绝对定位
-dataPosAb: function  (obj) {
-	var getVal = obj.data("pos-ab").split(",");
-	var setCss ={
-		"position":"absolute",
-		"width":parseInt(getVal[0]),
-		"height":parseInt(getVal[1]),
-		"top":parseInt(getVal[2]),
-		"left":parseInt(getVal[3]),
-		"visibility":"visible"
-	}
-	obj.css(setCss);
-}
-//是否ie6
-ie6: function  () {
+		var getVal = obj.data("pos-ab").split(",");
+		var setCss ={
+			"position":"absolute",
+			"width":parseInt(getVal[0]),
+			"height":parseInt(getVal[1]),
+			"top":parseInt(getVal[2]),
+			"left":parseInt(getVal[3]),
+			"visibility":"visible"
+		}
+		obj.css(setCss);
+	};  
+})(jQuery);
+
+
+
+/** 
+* extend 绝对定位
+* @author cuki13
+*/
+function ie6() {
 	var isIe6 = false;
 	if (/msie/.test(navigator.userAgent.toLowerCase())) {
 		if (jQuery.browser && jQuery.browser.version && jQuery.browser.version == '6.0') {
@@ -892,37 +962,183 @@ ie6: function  () {
 	return isIe6;
 }
 
-//每隔几秒滚动
-scollUp:function  (obj,speed) {
-	var MyMar = 0;
-	var scolldiv = obj.find(".scolldiv");
-	var objclone = obj.find(".scolldiv").clone();
-	objclone.appendTo(obj);
-	function Marquee() {
-		 if(objclone.offset().top - obj.offset().top <=0){
-				obj.scrollTop(0);
-		   }else{
-			   if ((obj.scrollTop())%(objclone.height()/2) == 0) {
-					clearInterval(MyMar);
-					setTimeout(
-						function(){
-							clearInterval(MyMar);
-							MyMar=setInterval(Marquee,speed);
-						}, 3000)
+/** 
+* extend 向上每隔几秒滚动
+* @author cuki13
+	$(obj).scollUp({
+		speed:3000,
+		scolldiv:'.scolldiv'
+	})
+*/
++(function($){  
+	$.fn.scollUp = function (options) {
+		var obj=$(this);
+		var defualts = {
+			scolldiv:'.scolldiv'
+		};
+		var opts = $.extend({}, defualts, options);  
 
+		var MyMar = 0;
+		var scolldiv = obj.find(opts.scolldiv);
+		var objclone = obj.find(opts.scolldiv).clone();
+		objclone.appendTo(obj);
+		function Marquee() {
+			 if(objclone.offset().top - obj.offset().top <=0){
+					obj.scrollTop(0);
+			   }else{
+				   if ((obj.scrollTop())%(objclone.height()/2) == 0) {
+						clearInterval(MyMar);
+						setTimeout(
+							function(){
+								clearInterval(MyMar);
+								MyMar=setInterval(Marquee,speed);
+							}, 3000)
+
+				   }
+						var k = obj.scrollTop();
+						obj.scrollTop(k+1);
 			   }
-					var k = obj.scrollTop();
-					obj.scrollTop(k+1);
-		   }
+		}
+
+		 MyMar=setInterval(Marquee,speed);
+
+		 obj.hover(function  () {
+			clearInterval(MyMar);
+		 },function  () {
+			clearInterval(MyMar);
+			MyMar=setInterval(Marquee,speed);
+		 })
+		
+	};  
+})(jQuery);
+
+
+
+/** 
+* extend 表单控件自定义
+* @author cuki13
+	
+	.selectstyle {position:relative; border:1px solid #ccc; height:30px;display:inline-block;line-height:30px; width:100px; overflow:hidden;}
+	.selectstyle select {position:absolute;left:0; top:0px; height:30px; margin:0; padding:0; width:110px; }
+	.selectstyle .val {}
+
+	obj.each(function (n) {
+	    dataFormType($(this));
+	})
+
+
+*/
+function dataFormType(obj) {
+
+	var gVal = obj.data("form-type");
+	var gId = obj.attr("id")||"no";
+	
+	switch (gVal) {
+	case 'select':
+		obj.css("opacity","0");	    
+		obj.wrap("<span class='selectstyle'></span>");
+		var gettxt = '<span class="val textb" >'+obj.find("option:eq(0)").html()+'<i class="none"></i></span>';
+		gettxt = $(gettxt);				
+		gettxt.insertBefore(obj);
+		//gettxt.width(obj.width());
+		//obj.parents(".selectstyle").width(obj.width()).addClass("select-"+ind);
+		obj.parents(".selectstyle").addClass("select-"+ gId);
+		obj.bind("change changeval",function  () {
+			var vl = $(this).find("option:selected").html();
+			$(this).prev('.val').html(vl);
+			$(this).parents(".selectstyle").find('.val').html(vl);
+		})
+		obj.trigger('changeval');				
+	break
+	case 'radio':
+		var setCss = {
+			"opacity":"0",
+			"position":"absolute"
+		}
+		obj.css(setCss);
+		var idiv = $('<i></i>');
+		idiv.insertBefore(obj);
+		obj.parent("label").css("position","relative");
+		obj.bind("change changeval",function  () {			
+				$(this).parent("label").addClass("ck-select").siblings("label").removeClass("ck-select");			
+		});
+	break
+	default:
 	}
+}
 
-	 MyMar=setInterval(Marquee,speed);
 
-	 obj.hover(function  () {
-		clearInterval(MyMar);
-	 },function  () {
-		clearInterval(MyMar);
-		MyMar=setInterval(Marquee,speed);
-	 })
-	  
+/** 
+* extend 弹出框
+* @author cuki13
+	$(obj).popbk();
+	.popbk-wrap {position: fixed; top: 0; left: 0; bottom: 0; right: 0; overflow: auto; z-index:100;}
+	.popbk {position: absolute; top:0; left:50%;}
+	.popbk .close {position:absolute;right:0;top:0;}
+
+*/
++(function($){  
+	$.fn.popbk = function (options) {
+		var obj=$(this);
+		var defualts = {
+			
+		};
+		var opts = $.extend({}, defualts, options);  
+		
+
+		obj.wrap('<div class="popbk-wrap-'+i+' popbk-wrap" ></div>');
+		obj.wrap('<div class="popbk-'+i+' popbk" ></div>');
+		var sClose = "<a class='close'><span class='none'>close</span></a>";
+		sClose = $(sClose);
+		sClose.insertAfter(obj);
+		var ml = obj.width()/2;			
+		obj.parent(".popbk").css("margin-left",-ml);
+		
+		var wh = obj.height();
+		if ($(window).height < wh) {
+			obj.parent(".popbk").css("top","30px");
+		}else {
+			obj.parent(".popbk").css({
+				"margin-top":-wh/2,
+				"top":'50%'
+			});
+		}
+		obj.parent(".popbk").find(".close").bind('click',function  () {
+			close ();
+		})
+		
+		obj.parents(".popbk-wrap").hide();
+		
+		function open(obj) {
+			close ();
+			if (obj.length) {
+				  $(".popbk-wrap").hide();
+				  obj.parents(".popbk-wrap").show();
+			}
+		}
+
+		function close () {
+			$(".popbk-wrap").hide();
+		}
+
+		return {
+			"open":open();
+			"close":close();
+		
+		}
+
+	};  
+})(jQuery);
+
+/** 
+* extend css3过度效果
+* @author cuki13
+*/
+function anim(obj,className,callBack){
+	obj.removeClass().addClass(className + ' animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+			if (callBack) {
+				callBack();
+			}
+	});
+
 }
