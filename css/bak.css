@@ -45,3 +45,15 @@ padding-left: 10px;
 line-height: 24px;
 font-size: 16px;
 color: white;}
+
+
+/*-- placeholder --*/
+input:-moz-placeholder {  
+      color: green;  
+}
+input::-webkit-input-placeholder {  
+      color: green;  
+    }  
+input:-ms-input-placeholder {  
+      color: green;  
+    }
