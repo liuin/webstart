@@ -833,6 +833,21 @@ var offsetX = canvas.offsetLeft,
 offsetY = canvas.offsetTop;
 var mousedown = false;
 
+function getTransparentPercent(ctx, width, height) {
+	var imgData = ctx.getImageData(0, 0, width, height),
+		pixles = imgData.data,
+		transPixs = [];
+	for (var i = 0, j = pixles.length; i < j; i += 4) {
+		var a = pixles[i + 3];
+		if (a < 128) {
+			transPixs.push(i);
+		}
+	}
+	rate=(transPixs.length / (pixles.length / 4) * 100).toFixed(2);
+   return rate
+}
+
+
 function layer(ctx) {
 var img1 = new Image();
 img1.onload = function() {
@@ -1019,8 +1034,8 @@ function ie6() {
 * @author cuki13
 	
 	.selectstyle {position:relative; border:1px solid #ccc; height:30px;display:inline-block;line-height:30px; width:100px; overflow:hidden;}
-	.selectstyle select {position:absolute;left:0; top:0px; height:30px; margin:0; padding:0; width:110px; }
-	.selectstyle .val {}
+	.selectstyle select {position:absolute;left:0; top:0px; height:30px; margin:0; padding:0; width:100%; height:38px; }
+	.selectstyle .val {display:block;}
 
 	obj.each(function (n) {
 	    dataFormType($(this));
@@ -1078,6 +1093,7 @@ function dataFormType(obj) {
 
 */
 +(function($){  
+	var i = 0;
 	$.fn.popbk = function (options) {
 		var obj=$(this);
 		var defualts = {
@@ -1088,6 +1104,7 @@ function dataFormType(obj) {
 
 		obj.wrap('<div class="popbk-wrap-'+i+' popbk-wrap" ></div>');
 		obj.wrap('<div class="popbk-'+i+' popbk" ></div>');
+		i++;
 		var sClose = "<a class='close'><span class='none'>close</span></a>";
 		sClose = $(sClose);
 		sClose.insertAfter(obj);
@@ -1122,8 +1139,8 @@ function dataFormType(obj) {
 		}
 
 		return {
-			"open":open();
-			"close":close();
+			"open":open(),
+			"close":close(obj)
 		
 		}
 
@@ -1142,3 +1159,43 @@ function anim(obj,className,callBack){
 	});
 
 }
+
+
+/*固定表格
+fixhead($(".fixhead"));
+<style type="text/css">
+	.fixhead-box {width:800px; position:relative; border:1px solid #000;
+	}
+	.fixhead {width:800px;}
+	.fixhead td,.fixhead th{border-bottom:1px solid #000;border-left:1px solid #000;}
+
+	.fixhead-ct {height:170px; overflow:auto; overflow-x:hidden;}
+	.fixhead-ct .trhd {visibility:hidden; display:none;}
+	.fixhead-hd {height:22px; overflow:hidden; background:#fff; position:relative;}
+</style>
+*/
+function fixhead(obj) {
+			var clonetb = '';
+			obj.find("th").each(function (n) {
+			    $(this).outerWidth($(this).outerWidth());
+				obj.find("tr:eq(1) td:eq("+n+")").outerWidth($(this).outerWidth());
+				if (n == obj.find("th").length-1) {
+					clonetb = obj.clone();
+					//clonetb.find("tr:eq(0)").siblings().remove();
+					
+					obj.wrap('<div class="fixhead-box"></div>');
+					obj.wrap('<div class="fixhead-ct"></div>');
+					
+					
+					clonetb.insertBefore(obj.parent());
+					clonetb.wrap('<div class="fixhead-hd"></div>');
+					obj.find("tr").last().find("td").css("border-bottom","0");
+					
+					
+				}
+			})
+
+			
+		}
+
+		
