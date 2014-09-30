@@ -57,3 +57,12 @@ input::-webkit-input-placeholder {
 input:-ms-input-placeholder {  
       color: green;  
     }
+
+/*只有webkit核心浏览器的谷歌浏览器、safari浏览器识别的CSS hack解决*/
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+.content_3_li { margin-left:2px; }
+	}
+
+/*-- iframe 
+<iframe frameborder="0" vspace="0" hspace="0" style="padding: 0; margin: 0; border: 0; outline: none; vertical-align: top;" scrolling="no" width="458" height="428" src="http://192.168.0.168/mall/index.php/mg/index/query/"></iframe>
+--*/
