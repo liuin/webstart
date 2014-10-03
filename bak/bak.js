@@ -1126,7 +1126,7 @@ function dataFormType(obj) {
 		
 		obj.parents(".popbk-wrap").hide();
 		
-		function open(obj) {
+		function open() {
 			close ();
 			if (obj.length) {
 				  $(".popbk-wrap").hide();
@@ -1139,13 +1139,18 @@ function dataFormType(obj) {
 		}
 
 		return {
-			"open":open(),
-			"close":close(obj)
-		
+			"open": function  () {
+				open();
+			},
+				
+			"close":function  () {
+				close();
+			}
 		}
-
 	};  
 })(jQuery);
+
+
 
 /** 
 * extend css3过度效果

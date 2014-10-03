@@ -47,7 +47,7 @@ font-size: 16px;
 color: white;}
 
 
-/*-- placeholder --*/
+/*-- 表单 placeholder --*/
 input:-moz-placeholder {  
       color: green;  
 }
@@ -61,8 +61,31 @@ input:-ms-input-placeholder {
 /*只有webkit核心浏览器的谷歌浏览器、safari浏览器识别的CSS hack解决*/
 @media screen and (-webkit-min-device-pixel-ratio:0) {
 .content_3_li { margin-left:2px; }
-	}
+}
 
-/*-- iframe 
+/*-- iframe --*/
 <iframe frameborder="0" vspace="0" hspace="0" style="padding: 0; margin: 0; border: 0; outline: none; vertical-align: top;" scrolling="no" width="458" height="428" src="http://192.168.0.168/mall/index.php/mg/index/query/"></iframe>
---*/
+
+
+/*-- 滚动条 --*/
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  border: 5px solid transparent;
+}
+::-webkit-scrollbar-track {
+  box-shadow: 1px 1px 5px rgba(0,0,0,.2) inset;
+}
+
+::-webkit-scrollbar-thumb {
+  min-height: 20px;
+  background-clip: content-box;
+  box-shadow: 0 0 0 5px rgba(0,0,0,.2) inset;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
