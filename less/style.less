@@ -1,0 +1,92 @@
+@import "varstyle.less";
+@import "variables.less";
+/*-- graolb --*/
+.none {display:none;}
+.v-h {visibility:hidden;}
+.textb{white-space:normal;word-wrap:break-word;word-break:break-all;}
+.textep {overflow:hidden;text-overflow: ellipsis;white-space: nowrap;}
+.unselect{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-o-user-select:none;user-select:none;}
+.yh {font-family:"Microsoft YaHei","微软雅黑","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;}
+.st {font-family:"\5B8B\4F53","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;}
+.ht {font-family:"\9ED1\4F53","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;}
+.ar {font-family:"Arial","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;}
+
+noscript {text-align:center;line-height:30px;background:#f60; color:#fff;font-size:14px; .yh()}
+
+body { }
+
+
+.popbk-wrap 
+{
+	position: fixed; top: 0; left: 0; bottom: 0; right: 0; overflow: auto; z-index:100;
+	.popbk 
+	{
+		position: absolute; top:0; left:50%;
+		.close {position:absolute;right:0;top:0; background:red;width:10px; height:10px;}
+	}
+}
+
+
+
+.container {width:1000px;}
+
+.row1{
+	.col-md-3 { color:#000;}
+	.col-md-6 {.col-md-3()}
+}
+
+@column: 30px;
+@margin: 10px;
+.column () {
+	float: left;
+	margin-right: @margin;
+}
+.span (@level: 1) {
+	.column();
+	width: (@level * @column) + ((@level - 1) * 10px);
+}
+
+/* media 
+横屏 
+@media screen and (orientation:landscape){
+      
+}
+*/
+/* 竖屏
+@media screen and (orientation:portrait){
+      
+}
+
+/* 大屏幕（大桌面显示器，大于等于1200px）
+@media (max-width: 1200px) {}
+*/
+
+/* 窗口宽度<960,设计宽度=768 
+@media screen and (max-width:992px){
+}
+*/
+/* 窗口宽度<768,设计宽度=640
+@media screen and (max-width:767px){
+     
+}
+ */
+/* 窗口宽度<640,设计宽度=480 
+@media screen and (max-width:639px){
+      
+}
+*/
+/* 窗口宽度<480,设计宽度=320 
+@media screen and (max-width:479px){
+      
+}
+*/
+/* windows UI 贴靠 
+@media screen and (-ms-view-state:snapped){
+      
+}
+*/
+/* 打印 
+@media print{
+      
+}
+*/
