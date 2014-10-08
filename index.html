@@ -3,11 +3,17 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <meta name="renderer" content="webkit">
 <meta name="description" content="">
 <meta name="author" content="cuki13">
-<!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"> -->
+<!-- 移动mate
+<meta name="apple-mobile-web-app-capable" content="yes">  
+<meta name="apple-mobile-web-app-status-bar-style" content="black"> 
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"> 
+
+-->
+
 <title>website name</title>
 <!-- <link rel="icon" href="images/favicon.ico">-->
 <!-- <link rel="stylesheet" href="css/reset.css" /> -->
@@ -16,7 +22,7 @@
 
 <!-- <link rel="stylesheet" href="css/bootstrap.css" /> -->
 <!-- <link rel="stylesheet" href="css/style.css" /> -->
-<link rel="stylesheet" href="css/less/css.php?file=style.less" />
+<link rel="stylesheet" href="css/style.css" />
 <!-- <script type="text/javascript" src="js/bootstrap.min.js"></script> -->
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/script.js"></script>
@@ -36,6 +42,22 @@
 		DD_belatedPNG.fix('.png');
 		//]]></script>
 <![endif]-->
+<!--移动端版本兼容 -->  
+<script type="text/javascript">  
+  var phoneWidth = parseInt(window.screen.width);  
+  var phoneScale = phoneWidth / 640;  
+  var ua = navigator.userAgent;  
+  if (/Android (\d+\.\d+)/.test(ua)) {  
+	var version = parseFloat(RegExp.$1);  
+	if (version > 2.3) {  
+	  document.write('<meta name="viewport" content="width=640, minimum-scale = ' + phoneScale + ', maximum-scale = ' + phoneScale + ', target-densitydpi=device-dpi">');  
+	} else {  
+	  document.write('<meta name="viewport" content="width=640, target-densitydpi=device-dpi">');  
+	}  
+  } else {  
+	document.write('<meta name="viewport" content="width=640, user-scalable=no, target-densitydpi=device-dpi">');  
+  }  
+</script>  
 <style type="text/css">
 	.fixhead-box {width:800px; position:relative; border:1px solid #000;
 	}
@@ -48,12 +70,12 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap" style="width:640px; margin:0 auto;">
 <p id="p1" class="animated">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
-<table class="fixhead">
+<table class="fixhead none">
 	<tr class="trhd">
 		<th  >1</th>
 		<th  >2</th>

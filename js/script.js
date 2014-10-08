@@ -70,8 +70,8 @@
 
 $(document).ready(function() {
 	//dong something
-	var pop = $("#pop").popbk();
-	pop.open();
+	//var pop = $("#pop").popbk();
+	//pop.open();
 	
 	
 	

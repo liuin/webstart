@@ -1,5 +1,5 @@
 <?php $page="home";$title="首页"; include("inc/header.php"); ?>
-<div class="container">
+<div class="container" style="width:320px; margin:0 auto; background:green; overflow:hidden;">
 	<div class="row">
 		<div class="col-md-9">
 			<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
@@ -25,7 +25,7 @@
 			  </div>
 			</div>
 
-			<div id="opv">
+			<div id="opv" >
 				<div class="dropdown">
 				  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					Dropdown trigger

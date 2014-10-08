@@ -1,0 +1,10 @@
+/*-- 完全干净页面  --*/
+<reference name="root">
+   <action method="setTemplate"><template>page/cms-empty.phtml</template></action>
+</reference>
+<reference name="content">
+            <action method="unsetChild">
+                <alias>cms.wrapper</alias>
+            </action>
+            <block type="cms/page" name="cms_page"/>
+</reference>

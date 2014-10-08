@@ -3,20 +3,53 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <meta name="renderer" content="webkit">
 <meta name="description" content="">
 <meta name="author" content="cuki13">
-<!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"> -->
+<!-- 移动mate
+<meta name="apple-mobile-web-app-capable" content="yes">  
+<meta name="apple-mobile-web-app-status-bar-style" content="black"> 
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"> 
+-->
+
+
 <title><?php if(isset($title)){echo $title;} ?></title>
 <!-- <link rel="icon" href="images/favicon.ico">-->
 <!-- <link rel="stylesheet" href="css/reset.css" /> -->
 <!-- <link rel="stylesheet" href="css/animate.css" /> -->
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/style.css" /> 
+<script type="text/javascript">
+<!--
+	(function(){
+	var dfWidth = 640;
+	var phoneWidth = parseInt(window.screen.width),
+		phoneScale = phoneWidth/dfWidth,
+		ua = navigator.userAgent;
+	
+	if (/Android (\d+\.\d+)/.test(ua)){
+		var version = parseFloat(RegExp.$1);
+		// andriod 2.3
+		if(version > 2.3){
+			document.write('<meta name="viewport" content="width='+dfWidth+', minimum-scale = '+phoneScale+', maximum-scale = '+phoneScale+', target-densitydpi=device-dpi">');
+			
+		// andriod 2.3以上
+		}else{
+			document.write('<meta name="viewport" content="width='+dfWidth+', target-densitydpi=device-dpi">');
+		}
+		// 其他系统
+	} else {
+		document.write('<meta name="viewport" content="width='+dfWidth+', user-scalable=no, target-densitydpi=device-dpi">');
+	}
+})();
+//-->
+</script>
 <script type="text/javascript" src="js/jquery.js"></script>
+
 <!-- <script type="text/javascript" src="js/bootstrap.min.js"></script> -->
 <script type="text/javascript" src="js/script.js"></script>
+
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!--[if lt IE 9]>
    <script src="js/html5.min.js"></script>
