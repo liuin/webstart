@@ -1027,7 +1027,357 @@ function ie6() {
 	};  
 })(jQuery);
 
+/** 
+* extend 图片滚动插件(CSS3滚动)
+* 
+* @package jquery
+* @author cuki13
 
+
+
+*/
++(function($){
+
+$.fn.scollpic= function (options) {
+	var obj = $(this);
+	var defualts = {
+			sdiv:"li",
+			showbigimg: 'off',
+			long: 'auto',
+			wrapClass:'scollpic'
+		};
+	var gtras = 0;
+	var opts = $.extend({},defualts,options);
+
+	var wrap_obj=$('<div class="'+opts.wrapClass+'"></div>');
+	wrap_obj.css({'position':'relative','height':opts.height});
+	var longk = 0;
+	var idbox = 0 ;
+	//计算长度
+	obj.each(function  () {
+		//加载箭头
+		if (opts.long == 'auto') {
+			opts.long = $(this).find(opts.sdiv).width();
+		}
+		
+		$(this).wrap(wrap_obj);
+		var arrow_prev=$('<a href="javascript:void(0);" class="scrool-product-list-prev endprev st"><span class="v-h">prev</span></a>');
+		var arrow_next=$('<a href="javascript:void(0);" class="scrool-product-list-next st"><span class="v-h">next</span></a>');
+		$(this).parent().append(arrow_prev).append(arrow_next);
+		$(this).wrap('<div class="scroll-warp" style="overflow:hidden;position:relative; height:'+opts.height+'px;"></div>');
+
+	/* 长度小于一定数目时候不显示箭头
+if ($(this).parents('.img_small').length > 0 && $(this).find('li').length < 6) {
+			arrow_prev.hide();
+			arrow_next.hide();
+			$(this).parents('.scroll_warp').css('margin-left','0');
+			return false;
+		}
+
+
+		if ($(this).find('li').length < 4) {
+			arrow_prev.hide();
+			arrow_next.hide();
+			$(this).parents('.scroll_warp').css('margin-left','0');
+			return true;
+		}
+*/
+		
+		arrow_prev.click(function  (e) {
+			
+			scoll('left',$(this).siblings('div'));
+		});
+
+		arrow_next.click(function  () {
+			scoll('right',$(this).siblings('div'));
+		});
+
+		var obj_width=0;
+
+		$(this).find(opts.sdiv).last().css("padding-right","0");
+		$(this).find(opts.sdiv).each(function  () {			
+			obj_width+=140;
+		});
+		longk = obj_width;
+		$(this).css({'position':'absolute','width':obj_width});	
+		
+
+		//moblie tounch
+		/*
+		var currntp = 0;
+		var pageX = 0;
+		var ifchlick = false;
+			
+			$("."+opts.wrapClass).bind("touchstart",function  (e) {
+				
+				currntp = window.event.touches[0].pageX;
+				ifchlick = true;
+				e.preventDefault();
+			});
+
+		   $("."+opts.wrapClass).bind('touchend', function(e) {
+			   if (pageX == 0) {
+				   return false;
+			   }
+			   e.preventDefault();
+				ifchlick = false;
+				var width_step = 10;
+				//alert(currntp+','+pageX);
+				
+				if ((Math.abs(currntp - pageX) >= width_step)) {
+					if (currntp - pageX >= width_step) {
+						arrow_next.trigger('click','one');
+						
+						//$(".show-pic .prev").trigger('click');
+					} else {
+						
+						arrow_prev.trigger('click','one');
+						//$(".show-pic .next").trigger('click');
+					}
+					
+				}
+				currntp = 0;
+				pageX = 0;
+				
+			});
+			*/
+
+			$("."+opts.wrapClass).bind('touchmove', function(e) {
+				e.preventDefault();
+				if (ifchlick) {
+					ifchlick = false;
+					pageX = window.event.targetTouches[0].pageX;					
+				}else {
+					return false;
+				}
+			});
+
+		
+		/*
+		function getCenter (objlk) {
+			
+			var wid = $(window).width();
+			
+			if (wid > 420) {
+				return false;
+			}
+			var centerpos = wid - 140;
+			centerpos = centerpos/2; 
+			var trlong = centerpos - objlk.offset().left - Math.abs(gtras);
+			console.log(trlong,gtras);
+			gtras = trlong;
+			$("#imglist").css({
+				"transition" : "0.5s",
+				"transform" : "translateX("+ trlong +"px)"
+			})
+			
+		}
+		*/
+		$("#imglist").css({
+				"transition" : "0.5s"
+		})
+		function getCenter (objlk) {
+			
+			var wid = $(window).width();
+			
+			if (wid > 700) {
+				return false;
+			}
+			var centerpos = wid - 140;
+			centerpos = centerpos/2; 
+			var trlong = objlk.offset().left - centerpos;
+						
+			$("#imglist").css({
+				"transform" : "translateX("+ (gtras - trlong) +"px)"
+			})
+			gtras = gtras - trlong;
+			
+		}
+		
+		//点击显示大图
+		
+		$(this).find(opts.sdiv).find("label").click(function  (e) {
+			
+			if (opts.showbigimg && (opts.showbigimg == 'off')) {
+				$(this).find("input").attr("checked","checked").change();
+				return true;
+			}else{
+			if(ifload == true || $(this).parent().hasClass('current')){ return true;}
+			idbox = obj.find(opts.sdiv+'.current').index();
+			var idnow = $(this).parent().index();
+			if (idbox>idnow) {
+				//arrow_prev.trigger('click');
+			}else {
+				//arrow_next.trigger('click');
+			}
+			
+			$(this).find("input").attr("checked","checked").change();
+
+			$(this).parent().siblings('li').removeClass('current');
+			$(this).parent().addClass('current');
+			
+			getCenter($(this));
+
+				return false;
+			if (opts.loadvd) {
+				opts.loadvd($(this));
+				return true;
+			}
+
+
+
+			if (opts.ppscollcallbackVideo) {
+				opts.ppscollcallbackVideo();
+				return true;
+			}
+
+			if (opts.showbigimg) {
+				show_img(opts.showbigimg,$(this).attr("rel"),$(this));
+				return true;
+			}
+				
+			
+			
+
+			}
+		})
+		function  checkend(objsc) {
+			
+			if (objsc.prev().length < 1) {
+				arrow_prev.addClass("endprev");
+			}else {
+				arrow_prev.removeClass("endprev");
+			}
+
+			if (objsc.next().length < 1) {
+				arrow_next.addClass("endnext");
+			}else {
+				arrow_next.removeClass("endnext");
+			}
+
+		}
+
+		var ifload = false;
+		var ajax_load = $('#loading');
+	
+		var show_img = function (obj,data,objlink) {
+			var img = $('<img src="' + data + '" />');
+			//obj.hide().attr('src', data).fadeIn();
+			//console.log(img[0].complete);
+
+			ajax_load.show();
+			ifload = true;
+			
+			if (img[0].complete) {
+				if (opts.ppscollcallback) {
+					opts.ppscollcallback(obj,objlink);
+				}
+				obj.hide().attr('src', data).fadeIn();
+				ajax_load.hide();
+				ifload = false;
+
+			}else {
+				img.load(function  () {
+				if (opts.ppscollcallback) {
+					opts.ppscollcallback(obj,objlink);
+				}
+
+
+				obj.hide().attr('src', data).fadeIn();
+				
+				ajax_load.hide();
+				ifload = false;
+				}).error(function(){
+					ajax_load.hide();
+					alert('很抱歉,加载失败');
+					ifload = false;
+				});
+			}
+		}
+
+	});
+	var scolllong = obj.width() - obj.parents().width() - 10;
+	var that = $(this).parent().parent(); 
+	//滚动函数
+
+	var goscoll= true;
+	function scoll(dir,obj) {
+		/*
+		if (goscoll == false) {
+			return false;
+		}
+
+		goscoll = false;
+		*/
+		var wid = $(window).width();
+		
+
+		if (dir=='right') {
+			if (gtras < (obj.find("li").length*(-140) + wid)) {
+        return false;
+      }
+			$("#imglist").css({
+				"transform" : "translateX("+ (gtras - 140) +"px)"
+			})
+			gtras = gtras - 140;
+			return false;
+			obj.animate({
+				scrollLeft:'+='+opts.long
+				//scrollLeft:longk-772
+			},function  () {
+				//console.log($(this).scrollLeft(),scolllong);
+				if ($(this).scrollLeft() > scolllong) {
+					that.find(".scrool-product-list-next").addClass("endnext");
+				}else {
+					
+					that.find(".scrool-product-list-next").removeClass("endnext");
+				}
+				that.find(".scrool-product-list-prev").removeClass("endprev");
+
+				if (opts.ppscollcallbackCount) {
+					opts.ppscollcallbackCount(obj,Math.abs(obj.scrollLeft()/opts.long));
+					return false;
+				}
+
+				goscoll = true;
+			});
+		}
+		if (dir=='left') {
+      if (gtras >= 0) {
+        return false;
+      }
+			$("#imglist").css({
+				"transform" : "translateX("+ (gtras + 140) +"px)"
+			})
+			gtras = gtras + 140;
+			return false;
+			obj.animate({
+				scrollLeft:'-='+opts.long
+				//scrollLeft:0
+			},function  () {
+				
+				if ($(this).scrollLeft() < 1) {
+					that.find(".scrool-product-list-prev").addClass("endprev");
+				}else {
+					
+					that.find(".scrool-product-list-prev").removeClass("endprev");
+				}
+				that.find(".scrool-product-list-next").removeClass("endnext");
+				if (opts.ppscollcallbackCount) {
+					opts.ppscollcallbackCount(obj,Math.abs(obj.scrollLeft()/opts.long));
+					return false;
+				}
+
+				goscoll = true;
+			});
+		}
+	}
+
+	
+
+};
+
+})(jQuery);
 
 /** 
 * extend 表单控件自定义

@@ -1,0 +1,21 @@
+/* ie.css */
+body {text-align:left;}
+.wrap {text-align:left;}
+.clearfix{zoom:1;}
+
+/*-- ie6 only --*/
+*html .class{}
+*html .wrap-content {}
+
+/*-- ie7 only --*/
+*+html .class {}
+
+[class*="col-"] {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eee;
+  background-color: rgba(86,61,124,.15);
+  border: 1px solid #ddd;
+  border: 1px solid rgba(86,61,124,.2);
+}
+body .col-md-4 {width:30%; }
