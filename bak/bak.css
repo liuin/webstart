@@ -91,3 +91,26 @@ input:-ms-input-placeholder {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+
+/*-- select-style rang控制 --*/
+.custom {
+  width: 80%;
+  -webkit-appearance: none !important;
+  height: 20px;
+  border-radius: 8px;
+  background: -webkit-gradient(linear,center top, center bottom, from(#CFDCDD),to(#DFE9EA),color-stop(50%,#DFE9EA));
+  -webkit-transition: background 450ms;
+  transition: background 450ms;
+  .rotate(90deg);
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background:#108A93;
+    height:30px;
+    width:30px;
+    border-radius: 15px;
+  }
+  &::-webkit-slider-thumb:before {
+    background-color: yellow;
+  }
+}
