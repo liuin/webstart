@@ -1,77 +1,21 @@
-/*-- graolb --*/
-.none {
-  display: none;
+/*-- global --*/
+body {
+  font-size: 20px;
 }
-.v-h {
-  visibility: hidden;
+@media (min-width: 1000px) {
+  body {
+    width: 1000px;
+  }
 }
-.textb {
-  white-space: normal;
-  word-wrap: break-word;
-  word-break: break-all;
+@media (min-width: 600px) {
+  body {
+    width: 600px;
+  }
 }
-.textep {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.unselect {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -o-user-select: none;
-  user-select: none;
-}
-.yh {
-  font-family: "Microsoft YaHei", "微软雅黑", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
-}
-.st {
-  font-family: "\5B8B\4F53", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
-}
-.ht {
-  font-family: "\9ED1\4F53", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
-}
-.ar {
-  font-family: "Arial", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
-}
-noscript {
-  text-align: center;
-  line-height: 30px;
-  background: #f60;
-  color: #fff;
-  font-size: 14px;
-  font-family: "Microsoft YaHei", "微软雅黑", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
-}
-.popbk-wrap {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  overflow: auto;
-  z-index: 100;
-}
-.popbk-wrap .popbk {
-  position: absolute;
-  top: 0;
-  left: 50%;
-}
-.popbk-wrap .popbk .close {
-  position: absolute;
-  right: 0;
-  top: 0;
-  background: red;
-  width: 10px;
-  height: 10px;
-}
-.container {
-  width: 1000px;
-}
-.row1 .col-md-3 {
-  color: #000;
-}
-.row1 .col-md-6 {
-  color: #000;
+@media (min-width: 350px) {
+  body {
+    width: 300px;
+  }
 }
 /* media 
 横屏 
