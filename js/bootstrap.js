@@ -80,14 +80,13 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
   // ALERT CLASS DEFINITION
   // ======================
-
   var dismiss = '[data-dismiss="alert"]'
   var Alert   = function (el) {
     $(el).on('click', dismiss, this.close)
   }
 
   Alert.VERSION = '3.2.0'
-
+  
   Alert.prototype.close = function (e) {
     var $this    = $(this)
     var selector = $this.attr('data-target')

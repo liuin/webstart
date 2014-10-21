@@ -1572,6 +1572,7 @@ function fixhead(obj) {
 /* 几秒后返回 
 subTime(obj,count);
 */
+
 var getId404=document.getElementById("sec_404");
 function subTime (obj,num_g) {    
   if (num_g==0) {
