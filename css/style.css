@@ -1,21 +1,8 @@
 /*-- global --*/
 body {
   font-size: 20px;
-}
-@media (min-width: 1000px) {
-  body {
-    width: 1000px;
-  }
-}
-@media (min-width: 600px) {
-  body {
-    width: 600px;
-  }
-}
-@media (min-width: 350px) {
-  body {
-    width: 300px;
-  }
+  -webkit-box-shadow: "2121";
+  box-shadow: "2121";
 }
 /* media 
 横屏 
