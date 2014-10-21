@@ -93,24 +93,77 @@ input:-ms-input-placeholder {
 }
 
 
-/*-- select-style rang控制 --*/
-.custom {
-  width: 80%;
+/*-- select-style --*/
+.range-hidden {
+  top: 110px !important;
+  margin-left: -80px !important;
+  transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg); 
+  -webkit-transform: rotate(-90deg); 
+  -o-transform: rotate(-90deg); 
+  -moz-transform: rotate(-90deg);
   -webkit-appearance: none !important;
-  height: 20px;
-  border-radius: 8px;
-  background: -webkit-gradient(linear,center top, center bottom, from(#CFDCDD),to(#DFE9EA),color-stop(50%,#DFE9EA));
-  -webkit-transition: background 450ms;
-  transition: background 450ms;
-  .rotate(90deg);
+  background: none;
+  z-index: 999;
   &::-webkit-slider-thumb {
     -webkit-appearance: none !important;
-    background:#108A93;
-    height:30px;
-    width:30px;
-    border-radius: 15px;
+    height:100px;
+    width:100px;
+    border: none;
+    position: relative;
+    background: none;
+  }
+}
+.custom {
+  -webkit-appearance: none !important;
+  height: 8px;
+  border-radius: 8px;
+  transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg); 
+  -webkit-transform: rotate(-90deg); 
+  -o-transform: rotate(-90deg); 
+  -moz-transform: rotate(-90deg); 
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    height:0px;
+    width:0px;
+    border: none;
+    position: relative;
+    background: none;
   }
   &::-webkit-slider-thumb:before {
-    background-color: yellow;
+    content: " ";
+    background-color: #E88C4C;
+    position: absolute;
+    top: 10px;
+    left: -20px;
+    width: 25px;
+    height: 25px;
+    border-radius: 10% 50% 50% 50%;
+    transform: rotate(45deg);
+    -ms-transform: rotate(45deg); 
+    -webkit-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
   }
+  &::-webkit-slider-thumb:after {
+    content: " ";
+    background-color: #FFFFFF;
+    position: absolute;
+    top: 10px;
+    left: -10px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+
+}
+
+.gray{
+  -webkit-filter:grayscale(100%);
+  -o-filter:grayscale(100%);
+  -moz-filter:grayscale(100%);
+  -ms-filter:grayscale(100%);
+  filter:grayscale(100%);
+  filter:gray;
 }
