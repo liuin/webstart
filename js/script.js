@@ -3,6 +3,7 @@
   'use strict';
   var srand = '[data-dismiss="srand"]';
   var Rand   = function (el) {
+
     $(this).html(randomColor());
   }
    
@@ -20,7 +21,7 @@
     return strHex;
   }
 
-  $(document).on('click', srand, Rand);
+  $(document).on('click.bs.alert.data-api', srand, Rand);
   
 }(jQuery);
 
