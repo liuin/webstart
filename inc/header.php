@@ -1,6 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script type="text/javascript">
+<!--
+/* 移动端版本兼容 
++(function(){
+  'use strict';
+  var Fixmobile = function  () {
+    this.viwep();
+  }
+
+  Fixmobile.width = 640;
+
+  Fixmobile.prototype.viwep = function  (e) {
+    var phoneWidth = parseInt(window.screen.width),
+    phoneScale = phoneWidth/Fixmobile.width,
+    ua = navigator.userAgent,
+    headmate;
+    if (/Android (\d+\.\d+)/.test(ua)){
+      var version = parseFloat(RegExp.$1);
+      // andriod 2.3
+      if(version > 2.3){
+        document.write('<meta name="viewport" content="width=' + Fixmobile.width + ', minimum-scale = ' + phoneScale + ', maximum-scale = '+phoneScale+', target-densitydpi=device-dpi">');
+      // andriod 2.3以上
+      }else{
+        document.write('<meta name="viewport" content="width=' + Fixmobile.width + ', target-densitydpi=device-dpi">');
+      }
+      // 其他系统
+    } else {
+      document.write('<meta name="viewport" content="width=' + Fixmobile.width + ', user-scalable=no, target-densitydpi=device-dpi">');
+    }
+  }
+  var newviewport = new Fixmobile();
+})();
+*/
+//-->
+</script>
+
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=Edge">
 
@@ -18,30 +54,6 @@
 <!-- <link rel="stylesheet" href="css/animate.css" /> -->
 <!-- <link rel="stylesheet" href="css/bootstrap.css" /> -->
 <link rel="stylesheet" href="css/style.css" /> 
-<script type="text/javascript">
-<!--
-  (function(){
-  var dfWidth = 640;
-  var phoneWidth = parseInt(window.screen.width),
-    phoneScale = phoneWidth/dfWidth,
-    ua = navigator.userAgent;
-  if (/Android (\d+\.\d+)/.test(ua)){
-    var version = parseFloat(RegExp.$1);
-    // andriod 2.3
-    if(version > 2.3){
-      document.write('<meta name="viewport" content="width='+dfWidth+', minimum-scale = '+phoneScale+', maximum-scale = '+phoneScale+', target-densitydpi=device-dpi">');
-      
-    // andriod 2.3以上
-    }else{
-      document.write('<meta name="viewport" content="width='+dfWidth+', target-densitydpi=device-dpi">');
-    }
-    // 其他系统
-  } else {
-    document.write('<meta name="viewport" content="width='+dfWidth+', user-scalable=no, target-densitydpi=device-dpi">');
-  }
-})();
-//-->
-</script>
 <script src="js/jquery.js"></script>
 <!-- <script src="js/bootstrap.min.js"></script> -->
 <!-- <script src="js/bootstrap.js"></script> -->
