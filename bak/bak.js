@@ -1,3 +1,70 @@
+/* ========================================================================
+ * Bootstrap: transition.js v3.2.0
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== 
+ $.support.transition && $parent.hasClass('fade') ?
+      $parent
+        .one('bsTransitionEnd', removeElement)
+        .emulateTransitionEnd(150) :
+removeElement()
+ 
+ */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+
 /** 
 * extend 图片滚动插件(有大图)
 * 
@@ -1373,65 +1440,108 @@ if ($(this).parents('.img_small').length > 0 && $(this).find('li').length < 6) {
     }
   }
 
-  
-
 };
 
 })(jQuery);
 
 /** 
 * extend 表单控件自定义
-* @author cuki13
-  
+* @author cuki13  
   .selectstyle {position:relative; border:1px solid #ccc; height:30px;display:inline-block;line-height:30px; width:100px; overflow:hidden;}
   .selectstyle select {position:absolute;left:0; top:0px; height:30px; margin:0; padding:0; width:100%; height:38px; }
   .selectstyle .val {display:block;}
-
   obj.each(function (n) {
       dataFormType($(this));
   })
 
-
 */
-function dataFormType(obj) {
-
-  var gVal = obj.data("form-type");
-  var gId = obj.attr("id")||"no";
+/*-- 表单select [data-form="select"]--*/
++function ($) {
+  'use strict';
+  var formSting = '[data-form="select"]';
   
-  switch (gVal) {
-  case 'select':
-    obj.css("opacity","0");     
-    obj.wrap("<span class='selectstyle'></span>");
-    var gettxt = '<span class="val textb" >'+obj.find("option:eq(0)").html()+'<i class="none"></i></span>';
+  var Select = function  (number) {
+    this.id = number;
+  }
+
+  Select.prototype.build = function  (el) {
+    var $this = $(el);
+    $this.css("opacity","0");
+    $this.wrap("<span class='selectstyle'></span>");
+    var gettxt = '<span class="val textb" >'+ $this.find("option:eq(0)").html()+'<i class="none"></i></span>';
     gettxt = $(gettxt);       
-    gettxt.insertBefore(obj);
-    //gettxt.width(obj.width());
-    //obj.parents(".selectstyle").width(obj.width()).addClass("select-"+ind);
-    obj.parents(".selectstyle").addClass("select-"+ gId);
-    obj.bind("change changeval",function  () {
+    gettxt.insertBefore($this);
+    $this.parents(".selectstyle").addClass("select-"+ this.id);
+    $this.on("change.resize",function  () {
       var vl = $(this).find("option:selected").html();
       $(this).prev('.val').html(vl);
       $(this).parents(".selectstyle").find('.val').html(vl);
     })
-    obj.trigger('changeval');       
-  break
-  case 'radio':
+    $this.trigger('change.resize');
+  }
+
+  function Plugin(option) {
+    return this.each(function (n) {
+      var $this   = $(this)
+      var number = $this.attr('id') || n 
+      var data    = $this.data('ck.select')
+      var options = typeof option == 'object' && option
+      if (!data) $this.data('ck.select', (data = new Select(number)))
+      if (option == 'build') data.build($(this))
+      else if (option) data.setState(option)
+    })
+  }
+
+  $(document).on('ready.ck.select', function (e) {
+    var $this = $(formSting);
+    Plugin.call($this,'build');
+  })
+  
+}(jQuery); 
+
+
+/*-- 表单radio [data-form="radio"] --*/
++function ($) {
+  'use strict';
+  var formSting = '[data-form="radio"]';
+  
+  var Radio = function  (number) {
+    this.id = number;
+  }
+
+  Radio.prototype.build = function  (el) {
     var setCss = {
       "opacity":"0",
       "position":"absolute"
     }
-    obj.css(setCss);
+    var $this = $(el);
+    $this.css(setCss);
     var idiv = $('<i></i>');
-    idiv.insertBefore(obj);
-    obj.parent("label").css("position","relative");
-    obj.bind("change changeval",function  () {      
+    idiv.insertBefore($this);
+    $this.parent("label").css("position","relative");
+    $this.on("change.resize",function  () {      
         $(this).parent("label").addClass("ck-select").siblings("label").removeClass("ck-select");     
     });
-  break
-  default:
   }
-}
 
+  function Plugin(option) {
+    return this.each(function (n) {
+      var $this   = $(this)
+      var number = $this.attr('id') || n 
+      var data    = $this.data('ck.select')
+      var options = typeof option == 'object' && option
+      if (!data) $this.data('ck.select', (data = new Radio(number)))
+      if (option == 'build') data.build($(this))
+      else if (option) data.setState(option)
+    })
+  }
+
+  $(document).on('ready.ck.radio', function (e) {
+    var $this = $(formSting);
+    Plugin.call($this,'build');
+  })
+  
+}(jQuery); 
 
 /** 
 * extend 弹出框
@@ -1440,80 +1550,152 @@ function dataFormType(obj) {
   .popbk-wrap {position: fixed; top: 0; left: 0; bottom: 0; right: 0; overflow: auto; z-index:100;}
   .popbk {position: absolute; top:0; left:50%;}
   .popbk .close {position:absolute;right:0;top:0;}
-
+  $("#popbk2").data('ck.pokbk').open();
+  $("#popbk2").data('ck.pokbk').close();
 */
-+(function($){  
-  var i = 0;
-  $.fn.popbk = function (options) {
-    var obj=$(this);
-    var defualts = {
-      
-    };
-    var opts = $.extend({}, defualts, options);  
-    
 
-    obj.wrap('<div class="popbk-wrap-'+i+' popbk-wrap" ></div>');
-    obj.wrap('<div class="popbk-'+i+' popbk" ></div>');
-    i++;
++(function($){
+  var dataString = '[data-box="popbk"]';
+  
+  var Popbk = function  (el, number ,options) {
+    this.el = $(el)
+    this.id = number
+    this.options = $.extend({}, this.defualts, options); 
+  }
+  
+  Popbk.defualts = {};
+
+  Popbk.prototype.build = function  (el) {
+    
+    var $this = $(el);
+    $this.wrap('<div class="popbk-wrap-'+ this.id +' popbk-wrap fade" ></div>');
+    $this.wrap('<div class="popbk-'+ this.id +' popbk" ></div>');
+
     var sClose = "<a class='close'><span class='none'>close</span></a>";
     sClose = $(sClose);
-    sClose.insertAfter(obj);
-    var ml = obj.width()/2;     
-    obj.parent(".popbk").css("margin-left",-ml);
+    sClose.insertAfter($this);
+    var ml = $this.width()/2;     
+    $this.parent(".popbk").css("margin-left",-ml);
     
-    var wh = obj.height();
+    var wh = $this.height();
     if ($(window).height < wh) {
-      obj.parent(".popbk").css("top","30px");
+      $this.parent(".popbk").css("top","30px");
     }else {
-      obj.parent(".popbk").css({
+      $this.parent(".popbk").css({
         "margin-top":-wh/2,
         "top":'50%'
       });
     }
-    obj.parent(".popbk").find(".close").bind('click',function  () {
-      close ();
+    $this.parent(".popbk").find(".close").on('click',function  () {
+      $this.data('ck.pokbk').close();
+    })    
+    $this.parents(".popbk-wrap").hide();
+  }
+
+  Popbk.prototype.open = function  () {
+    this.close;
+    var $this = this.el;
+    if ($this.length) { 
+      $(".popbk-wrap").show();
+      $(".popbk-wrap")[0].offsetWidth;
+      $(".popbk-wrap").addClass("in");
+
+    }
+  }
+
+  Popbk.prototype.close = function  () {
+    var $this = this.el;
+    var $parent = $this.parents(".popbk-wrap");
+    if ($.support.transition && $parent.hasClass('fade')) {
+      $parent.removeClass("in");
+      $parent.one('bsTransitionEnd', function  () {
+          $parent.hide();
+        }).emulateTransitionEnd(150);
+    }else {
+      $parent.hide();
+    }
+  }
+
+  function Plugin(option) {
+    return this.each(function (n) {
+      var $this   = $(this)
+      var data    = $this.data('ck.pokbk')
+      var number = $this.attr('id') || n 
+      var options = typeof option == 'object' && option
+      if (!data) $this.data('ck.pokbk', (data = new Popbk(this,number)))
+      if (option == 'build') data.build($(this))
+      else if (option) data.setState(option)
     })
-    
-    obj.parents(".popbk-wrap").hide();
-    
-    function open() {
-      close ();
-      if (obj.length) {
-          $(".popbk-wrap").hide();
-          obj.parents(".popbk-wrap").show();
-      }
-    }
+  }
 
-    function close () {
-      $(".popbk-wrap").hide();
-    }
-
-    return {
-      "open": function  () {
-        open();
-      },
-        
-      "close":function  () {
-        close();
-      }
-    }
-  };  
+  $(document).on('ready.popbk', function  () {
+    var $this = $(dataString);
+    Plugin.call($this,'build');
+  })
 })(jQuery);
 
 
 
-/** 
-* extend css3过度效果
-* @author cuki13
-*/
-function anim(obj,className,callBack){
-  obj.removeClass().addClass(className + ' animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-      if (callBack) {
-        callBack();
-      }
-  });
+/*-- boostroap 过渡效果
+use:
+$.support.transition && $parent.hasClass('fade') ?
+  $parent
+    .one('bsTransitionEnd', function(){})
+    .emulateTransitionEnd(350) :
+  function(){}
+--*/
 
-}
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
 
 
 /*固定表格
@@ -1530,35 +1712,29 @@ fixhead($(".fixhead"));
 </style>
 */
 function fixhead(obj) {
-      var clonetb = '';
-      obj.find("th").each(function (n) {
-          $(this).outerWidth($(this).outerWidth());
-        obj.find("tr:eq(1) td:eq("+n+")").outerWidth($(this).outerWidth());
-        if (n == obj.find("th").length-1) {
-          clonetb = obj.clone();
-          //clonetb.find("tr:eq(0)").siblings().remove();
-          
-          obj.wrap('<div class="fixhead-box"></div>');
-          obj.wrap('<div class="fixhead-ct"></div>');
-          
-          
-          clonetb.insertBefore(obj.parent());
-          clonetb.wrap('<div class="fixhead-hd"></div>');
-          obj.find("tr").last().find("td").css("border-bottom","0");
-          
-          
-        }
-      })
-
+  var clonetb = '';
+  obj.find("th").each(function (n) {
+      $(this).outerWidth($(this).outerWidth());
+    obj.find("tr:eq(1) td:eq("+n+")").outerWidth($(this).outerWidth());
+    if (n == obj.find("th").length-1) {
+      clonetb = obj.clone();
+      //clonetb.find("tr:eq(0)").siblings().remove();
       
+      obj.wrap('<div class="fixhead-box"></div>');
+      obj.wrap('<div class="fixhead-ct"></div>');
+      
+      
+      clonetb.insertBefore(obj.parent());
+      clonetb.wrap('<div class="fixhead-hd"></div>');
+      obj.find("tr").last().find("td").css("border-bottom","0");
     }
+  })      
+}
 
     
 
 
-/* 几秒后返回 
-subTime(obj,count);
-*/
+/* 取随机颜色 */
 +function ($) {
   'use strict';
   var srand = '[data-dismiss="srand"]';

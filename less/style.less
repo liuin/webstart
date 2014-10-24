@@ -6,6 +6,14 @@ body {
   font-size:20px;
 }
 
+.fade {
+  opacity: 0;
+  .transition(opacity 3.15s linear);
+  &.in {
+    opacity: 1;
+  }
+}
+
 /* media 
 横屏 
 @media screen and (orientation:landscape){

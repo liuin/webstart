@@ -167,3 +167,14 @@ input:-ms-input-placeholder {
   filter:grayscale(100%);
   filter:gray;
 }
+
+.fade.in {
+opacity: 1;
+}
+
+.fade{
+  opacity: 0;
+  -webkit-transition: opacity .15s linear;
+  -o-transition: opacity .15s linear;
+  transition: opacity .15s linear;
+}

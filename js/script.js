@@ -1,3 +1,63 @@
+if (typeof jQuery === 'undefined') { throw new Error('JavaScript requires jQuery') }
+
+/* ========================================================================
+ * Bootstrap: transition.js v3.2.0
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { console.log("222"); called = true;  })
+    var callback = function () {console.log("111"); if (!called) $($el).trigger($.support.transition.end);}
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+}(jQuery);
 
 /*-- alert --*/
 +function ($) {
@@ -41,10 +101,11 @@
       // detach from parent, fire event then clean up data
       $parent.detach().trigger('closed.bs.alert').remove()
     }
+    
     $.support.transition && $parent.hasClass('fade') ?
       $parent
         .one('bsTransitionEnd', removeElement)
-        .emulateTransitionEnd(150) :
+        .emulateTransitionEnd(1350) :
       removeElement()
   }
 
@@ -56,7 +117,6 @@
     return this.each(function () {
       var $this = $(this)
       var data  = $this.data('bs.alert')
-
       if (!data) $this.data('bs.alert', (data = new Alert(this)))
       if (typeof option == 'string') data[option].call($this)
     })
@@ -89,14 +149,11 @@
 +function ($) {
   'use strict';
   var srand = '[data-dismiss="srand"]';
-
   var gand = function (el) {
-
-    this.vd = "vd";
+    this.vd = "v221d";
   }
    
   gand.prototype.colorrun = function (el) {
-    console.log(this.vd,el);
     var arrHex = ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"];
     var strHex = "#";
     var index;
@@ -248,6 +305,26 @@
 }(jQuery);
 
 
+
+
+
+function dataFormType(obj) {
+
+  var gVal = obj.data("form-type");
+  var gId = obj.attr("id")||"no";
+  
+  switch (gVal) {
+  case 'select':
+      
+  break
+  case 'radio':
+
+  break
+  default:
+  }
+}
+
+
 $(document).ready(function() {
   /*
   $("#btn-alert").parent().on("close.bs.alert",function  () {
@@ -264,4 +341,91 @@ $(document).ready(function() {
     $btn.button('reset')
   })
 
+  $("#my-select").val(2);
+})
+
+/*-- 弹出框 --*/
+
++(function($){
+  var dataString = '[data-box="popbk"]';
+
+  
+  var Popbk = function  (el, number ,options) {
+    this.el = $(el)
+    this.id = number
+    this.options = $.extend({}, this.defualts, options); 
+  }
+  
+  Popbk.defualts = {};
+
+  Popbk.prototype.build = function  (el) {
+    
+    var $this = $(el);
+    $this.wrap('<div class="popbk-wrap-'+ this.id +' popbk-wrap" ></div>');
+    $this.wrap('<div class="popbk-'+ this.id +' popbk" ></div>');
+
+    var sClose = "<a class='close'><span class='none'>close</span></a>";
+    sClose = $(sClose);
+    sClose.insertAfter($this);
+    var ml = $this.width()/2;     
+    $this.parent(".popbk").css("margin-left",-ml);
+    
+    var wh = $this.height();
+    if ($(window).height < wh) {
+      $this.parent(".popbk").css("top","30px");
+    }else {
+      $this.parent(".popbk").css({
+        "margin-top":-wh/2,
+        "top":'50%'
+      });
+    }
+    $this.parent(".popbk").find(".close").bind('click',function  () {
+      close ();
+    })
+    
+    $this.parents(".popbk-wrap").hide();
+    
+
+  }
+
+  Popbk.prototype.open = function  () {
+    this.close;
+    var $this = this.el;
+    if ($this.length) {
+      $(".popbk-wrap").hide();
+      $this.parents(".popbk-wrap").show();
+    }
+  }
+
+  Popbk.prototype.close = function  () {
+    $(".popbk-wrap").hide();
+  }
+
+  function Plugin(option) {
+    return this.each(function (n) {
+      var $this   = $(this)
+      var data    = $this.data('ck.pokbk')
+      var number = $this.attr('id') || n 
+      var options = typeof option == 'object' && option
+      if (!data) $this.data('ck.pokbk', (data = new Popbk(this,number)))
+      if (option == 'build') data.build($(this))
+      else if (option) data.setState(option)
+    })
+  }
+
+
+  $(document).on('ready.popbk', function  () {
+    var $this = $(dataString);
+    Plugin.call($this,'build');
+
+  })
+  
+})(jQuery);
+
+$(document).ready(function() {
+  setTimeout(
+    function(){
+       console.log($("#popbk1").data('ck.pokbk'));
+       $("#popbk2").data('ck.pokbk').open();
+    }, 1000)  
 })
