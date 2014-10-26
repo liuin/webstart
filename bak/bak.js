@@ -344,9 +344,6 @@ if ($(this).parents('.img_small').length > 0 && $(this).find('li').length < 6) {
       });
     }
   }
-
-  
-
 };
 
 })(jQuery);
