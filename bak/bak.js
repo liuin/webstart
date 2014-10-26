@@ -1100,8 +1100,6 @@ function ie6() {
 * @package jquery
 * @author cuki13
 
-
-
 */
 +(function($){
 
@@ -1628,10 +1626,11 @@ if ($(this).parents('.img_small').length > 0 && $(this).find('li').length < 6) {
     })
   }
 
-  $(document).on('ready.popbk', function  () {
+  $(document).ready(function() {
     var $this = $(dataString);
     Plugin.call($this,'build');
   })
+  
 })(jQuery);
 
 
