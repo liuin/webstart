@@ -50,9 +50,10 @@
 -->
 <title><?php if(isset($title)){echo $title;} ?></title>
 <!-- <link rel="icon" href="images/favicon.ico">-->
-<link rel="stylesheet" href="css/reset.css" />
+<!-- <link rel="stylesheet" href="css/reset.css" /> -->
 <!-- <link rel="stylesheet" href="css/animate.css" /> -->
 <!-- <link rel="stylesheet" href="css/bootstrap.css" /> -->
+<!-- <link rel="stylesheet" href="css/font-awesome.css" />  -->
 <link rel="stylesheet" href="css/style.css" /> 
 <script src="js/jquery.js"></script>
 <!-- <script src="js/bootstrap.min.js"></script> -->
@@ -60,10 +61,7 @@
 <script src="js/script.js"></script>
 
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-   <script src="js/html5.min.js"></script>
-   <script src="js/respond.js"></script>
-<![endif]-->
+
 <!--[if IE 8]>
   <link href="css/ie.css" rel="stylesheet" media="all" type="text/css" />
 <![endif]-->
