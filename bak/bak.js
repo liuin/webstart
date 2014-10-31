@@ -1735,6 +1735,24 @@ function fixhead(obj) {
   var newviewport = new Fixmobile();
 })();
 
+/*-- 表格copy --*/
+$(document).ready(function() {
+  $("#adress p").each(function(n){
+    var gVal = $(this).html();
+    $(".table-biz tr").eq(n).append('<td>' + gVal + '</td>');
+  })
 
+  var tbCount = 0;
+  $(".area p").each(function (n) {
+      var count = $(this).data("itemcount");
+      for (var i = 0;  i < count ; i++) {
+        if (i == 0) {
+          var ghtml = '<td rowspan="'+ count +'">' + $(this).html() + '</td>';
+          $(".table-biz tr").eq(tbCount).prepend(ghtml);
+        }
+        tbCount++;
+      }
+  })
+})
   
 
