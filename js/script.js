@@ -413,19 +413,10 @@ $(document).ready(function() {
     })
   }
 
-
-  $(document).on('ready.popbk', function  () {
+  $(document).ready(function() {
     var $this = $(dataString);
-    Plugin.call($this,'build');
-
+    Plugin.call($this,'build');      
   })
+
   
 })(jQuery);
-
-$(document).ready(function() {
-  setTimeout(
-    function(){
-       console.log($("#popbk1").data('ck.pokbk'));
-       $("#popbk2").data('ck.pokbk').open();
-    }, 1000)  
-})

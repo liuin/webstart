@@ -246,11 +246,8 @@ $.fn.scollpic= function (options) {
 
     var ifload = false;
     var ajax_load = $('<div id="loading" class="loading yh"><i></i><span>加载中。。。</span></div>');
-    //console.log(ajax_load);
     var show_img = function (obj,data,objlink) {
       var img = $('<img src="' + data + '" />');
-      //obj.hide().attr('src', data).fadeIn();
-      //console.log(img[0].complete);
 
       ajax_load.insertBefore(obj);
       ifload = true;
@@ -311,7 +308,6 @@ $.fn.scollpic= function (options) {
     if (dir=='left') {
       obj.animate({
         scrollLeft:'-='+opts.long
-        //scrollLeft:0
       },function  () {
         
         if ($(this).scrollLeft() < 1) {
@@ -549,8 +545,6 @@ jQuery.extend(jQuery.easing, {
   }
 });
 
-
-
  /** 
 * extend 图片滚动插件(无大图)
 * 
@@ -561,9 +555,8 @@ jQuery.extend(jQuery.easing, {
     scrollWidth: 1680,
     loop: true
   });
-
-
 */
+
 ;(function($){  
   $.fn.scbanner = function (options) {  
     var defualts = { 
@@ -701,8 +694,6 @@ jQuery.extend(jQuery.easing, {
       }
     }
 
-    
-    
     //moblie tounch
     var currntp = 0;
     var pageX;
@@ -720,10 +711,8 @@ jQuery.extend(jQuery.easing, {
       if (Math.abs(currntp - pageX) >= width_step) {
         if (currntp - pageX >= width_step) {
           click_prev();
-          //$(".show-pic .prev").trigger('click');
         } else {
           click_next();
-          //$(".show-pic .next").trigger('click');
         }
         $("."+opts.warpcss).trigger("mouseleave");
       }
@@ -791,11 +780,8 @@ jQuery.extend(jQuery.easing, {
           wpauto = false;
           clearInterval(timecount);
         }
-        
       }
-      
     }
-    
     return contr;
   };  
 })(jQuery);
@@ -1033,7 +1019,7 @@ function ie6() {
     scolldiv:'.scolldiv'
   })
 */
-+(function($){  
++(function($){
   $.fn.scollUp = function (options) {
     var obj=$(this);
     var defualts = {
@@ -1111,26 +1097,8 @@ $.fn.scollpic= function (options) {
     var arrow_next=$('<a href="javascript:void(0);" class="scrool-product-list-next st"><span class="v-h">next</span></a>');
     $(this).parent().append(arrow_prev).append(arrow_next);
     $(this).wrap('<div class="scroll-warp" style="overflow:hidden;position:relative; height:'+opts.height+'px;"></div>');
-
-  /* 长度小于一定数目时候不显示箭头
-if ($(this).parents('.img_small').length > 0 && $(this).find('li').length < 6) {
-      arrow_prev.hide();
-      arrow_next.hide();
-      $(this).parents('.scroll_warp').css('margin-left','0');
-      return false;
-    }
-
-
-    if ($(this).find('li').length < 4) {
-      arrow_prev.hide();
-      arrow_next.hide();
-      $(this).parents('.scroll_warp').css('margin-left','0');
-      return true;
-    }
-*/
     
-    arrow_prev.click(function  (e) {
-      
+    arrow_prev.click(function  (e) {  
       scoll('left',$(this).siblings('div'));
     });
 
@@ -1767,6 +1735,24 @@ function fixhead(obj) {
   var newviewport = new Fixmobile();
 })();
 
+/*-- 表格copy --*/
+$(document).ready(function() {
+  $("#adress p").each(function(n){
+    var gVal = $(this).html();
+    $(".table-biz tr").eq(n).append('<td>' + gVal + '</td>');
+  })
 
+  var tbCount = 0;
+  $(".area p").each(function (n) {
+      var count = $(this).data("itemcount");
+      for (var i = 0;  i < count ; i++) {
+        if (i == 0) {
+          var ghtml = '<td rowspan="'+ count +'">' + $(this).html() + '</td>';
+          $(".table-biz tr").eq(tbCount).prepend(ghtml);
+        }
+        tbCount++;
+      }
+  })
+})
   
 

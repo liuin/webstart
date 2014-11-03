@@ -1,14 +1,8 @@
 /* ie.css */
-.modal-dialog {
-  z-index: 100;
+.container {
 }
-.modal-backdrop {
-  display: none;
-}
+
 /*-- ie6 only --*/
 *html .open .dropdown-menu {
-  display: block;
-  top: 30px;
-  width: 160px;
 }
 /*-- ie7 only --*/

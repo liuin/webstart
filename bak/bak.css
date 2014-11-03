@@ -1,25 +1,28 @@
-/*-- box_rotate  --*/
-
-@-webkit-keyframes road {
-  0% {-webkit-transform:rotate(0deg);}
-  100% {-webkit-transform:rotate(360deg);} 
+/*-- fa-spin 旋转  --*/
+.fa-spin {
+  -webkit-animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear;
 }
-
-@keyframes road {
-  0% {transform:rotate(0deg);}
-  100% {transform:rotate(360deg);} 
+@-webkit-keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
 }
-
-
-.road {
-  -webkit-animation-duration: 20s;
-  animation-duration: 20s;
-  -webkit-animation-delay: 0s;
-  -webkit-animation-timing-function:linear;
-  -webkit-animation-name: road;
-          animation-name: road;
+@keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
 }
-
 
 
 /*-- loading --*/
@@ -45,6 +48,34 @@ padding-left: 10px;
 line-height: 24px;
 font-size: 16px;
 color: white;}
+
+/*-- loading  --*/
+#loading {
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0; 
+  background:#fff;
+  span {
+    position:absolute;
+    padding: 15px;
+    border-radius: 3px;
+    top:50%;
+    left:50%; 
+    border:1px solid #ccc;
+    border-radius:6px;
+    padding: 10px 16px;
+    margin-left:-50px;
+    margin-top:-50px;
+    background:#fff;
+    i {
+      color:#000;
+      font-size:80px;
+    }
+  }
+}
+
 
 
 /*-- 表单 placeholder --*/

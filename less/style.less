@@ -1,18 +1,79 @@
 // Core variables and mixins
-@import "mixins/vendor-prefixes.less";
+@import "bootstrap.less";
 
-/*-- global --*/
-body {
-  font-size:20px;
+/*-- Globals --*/
+noscript {
+  text-align: center;
+  display: block;
+  background: red;
+  color: #fff;
+  line-height: 30px;
 }
 
-.fade {
-  opacity: 0;
-  .transition(opacity 3.15s linear);
-  &.in {
-    opacity: 1;
+.fl {
+  float:left; 
+  display:inline;
+}
+.fr {
+  float:right; 
+  display:inline;
+}
+.none {
+  display:none;
+}
+.v-h {
+  visibility:hidden;
+}
+.textb{
+  white-space:normal;
+  word-wrap:break-word;
+  word-break:break-all;
+}
+.textep {
+  overflow:hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.unselect{
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  -o-user-select:none;
+  user-select:none;
+}
+.yh {
+  font-family:"Microsoft YaHei","微软雅黑","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;
+}
+.st {
+  font-family:"\5B8B\4F53","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;
+}
+.ht {
+  font-family:"\9ED1\4F53","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;
+}
+.ar {
+  font-family:"Arial","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;
+}
+
+
+/*-- grid --*/
+h4 {
+  margin-top: 25px;
+}
+.row {
+  margin-bottom: 20px;
+  clear:both;
+  .col-xs-6 {
+    background:#eee;
+    padding-top:10px;
+    padding-bottom:10px;
   }
 }
+
+hr {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
 
 /* media 
 横屏 
@@ -25,29 +86,19 @@ body {
       
 }
 
-/* 大屏幕（大桌面显示器，大于等于1200px）
-@media (max-width: 1200px) {}
+/* 小屏幕（大桌面显示器，大于等于750px）
+@media (min-width: 750px) {}
 */
 
-/* 窗口宽度<960,设计宽度=768 
-@media screen and (max-width:992px){
-}
+/* 中屏幕（大桌面显示器，大于等于970px）
+@media (min-width: 970px) {}
 */
-/* 窗口宽度<768,设计宽度=640
-@media screen and (max-width:767px){
-     
-}
- */
-/* 窗口宽度<640,设计宽度=480 
-@media screen and (max-width:639px){
-      
-}
+
+/* 大屏幕（大桌面显示器，大于等于1170px）
+@media (min-width: 1170px) {}
 */
-/* 窗口宽度<480,设计宽度=320 
-@media screen and (max-width:479px){
-      
-}
-*/
+
+
 /* windows UI 贴靠 
 @media screen and (-ms-view-state:snapped){
       
