@@ -114,22 +114,6 @@ $.fn.scollpic= function (options) {
     $(this).parent().append(arrow_prev).append(arrow_next);
     $(this).wrap('<div class="scroll-warp" style="overflow:hidden;position:relative; height:'+opts.height+'px;"></div>');
 
-  /* 长度小于一定数目时候不显示箭头
-if ($(this).parents('.img_small').length > 0 && $(this).find('li').length < 6) {
-      arrow_prev.hide();
-      arrow_next.hide();
-      $(this).parents('.scroll_warp').css('margin-left','0');
-      return false;
-    }
-
-
-    if ($(this).find('li').length < 4) {
-      arrow_prev.hide();
-      arrow_next.hide();
-      $(this).parents('.scroll_warp').css('margin-left','0');
-      return true;
-    }
-*/
     arrow_prev.click(function  () {
       scoll('left',$(this).siblings('div'));
     });
