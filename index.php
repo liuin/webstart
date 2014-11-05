@@ -8,6 +8,7 @@
   .scrolllist li{
     float:left;
     width:157px;
+    list-style-type:none;
   }
   .scrolllist img {
     width:100%;
@@ -16,9 +17,14 @@
   .scroll-warp {
     width:300px;
   }
+  .v-h {
+    visibility:visible;
+  }
 </style>
 <div class="container">
   <ul class="scrolllist" id="scrollpic">
+    <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
+    <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
     <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
     <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
     <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
@@ -38,16 +44,82 @@ $(document).ready(function() {
     itemWidth : 157,
     itemHeight : 250,
     bigImg : 'off',
-    wrapClass :'scrollpic-wrap',
     scollBack : function  (img , obj) {
-      
       //执行完回调事件处理
     }
    
    });
 })
 
-<!--
+
+/* ========================================================================
+ * Bootstrap: transition.js v3.2.0
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== 
+ $.support.transition && $parent.hasClass('fade') ?
+      $parent
+        .one('bsTransitionEnd', removeElement)
+        .emulateTransitionEnd(150) :
+removeElement()
+ 
+ */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+
+
 /** 
 * extend 图片滚动插件(有大图)
 * 
@@ -67,6 +139,7 @@ $(document).ready(function() {
   });
 
 */
+
 +(function($){
 
 $.fn.scollpic= function (options) {
@@ -77,18 +150,23 @@ $.fn.scollpic= function (options) {
       itemTag : "li",
       itemWidth : 157,
       itemHeight : 150,
+      itemCount: 3,
       bigImg : 'off',
       wrapClass :'scrollpic-wrap',
+      parenWidth : 'auto'
     };
 
     var opts = $.extend({},defualts,options);
 
     var ifLoad = false; //是否加载
     var currentItemIndex = 0 ; //当前item索引
+    if (opts.parenWidth == 'auto') {
+      opts.parenWidth = parseInt(opts.itemCount * opts.itemWidth);
+    }
 
-    var $wrapObj=$('<div class="'+opts.wrapClass+'"></div>');
+    var $wrapObj=$('<div class="' + opts.wrapClass + '"></div>');
 
-    $wrapObj.css({'position':'relative','height':opts.height});
+    $wrapObj.css({'position':'relative','height':opts.itemHeight});
     
     //加载箭头
     if (opts.itemWidth == 'auto') {
@@ -102,14 +180,14 @@ $.fn.scollpic= function (options) {
 
     $this.parent().append($arrowPrev).append($arrowNext);
 
-    $this.wrap('<div class="scroll-warp" style="overflow:hidden;position:relative; height:' + opts.itemHeight + 'px;"></div>');
+    $this.wrap('<div class="scroll-warp" style="overflow:hidden;position:relative; height:' + opts.itemHeight + 'px; width:' + opts.parenWidth + 'px;"></div>');
 
     $arrowPrev.click(function  () {
-      scoll('left',$(this).siblings('div'));
+      scoll('left',$this);
     });
 
     $arrowNext.click(function  () {
-      scoll('right',$(this).siblings('div'));
+      scoll('right',$this);
     });
 
     var itemTotal=0;
@@ -118,7 +196,7 @@ $.fn.scollpic= function (options) {
     $this.find(opts.itemTag).each(function  () {     
       itemTotal+=$(this).outerWidth();
     });
-    $this.css({'position':'absolute','width':itemTotal}); 
+    $this.css({'position':'relative','width':itemTotal}); 
     
 
     //moblie tounch手机事件
@@ -212,7 +290,6 @@ $.fn.scollpic= function (options) {
     var ajaxLoad = $('<div id="loading" class="loading yh"><i></i><span>加载中。。。</span></div>');
     var showImg = function (obj,data,objlink) {
       var img = $('<img src="' + data + '" />');
-
       ajaxLoad.insertBefore(obj);
       ifload = true;
       
@@ -240,32 +317,51 @@ $.fn.scollpic= function (options) {
       }
     }
 
-    var scolllong = $this.width() - $this.parents().width() - 10;
+    var ifScroll = false;
 
     //滚动函数
     function scoll(dir,obj) {
-      if (dir=='right') {
+      if (ifScroll == true) {
+        return false;
+      }
+
+      ifScroll = true;
+      if (dir=='left') {
+        if (obj.position().left >= 0) {
+          ifScroll = false;
+          return false;
+        }
         obj.animate({
-          scrollLeft:'+='+opts.itemWidth
+          left:'+='+opts.itemWidth
         },function  () {
-          if ($(this).scrollLeft() > scolllong) {
-            $this.find(".scrool-product-list-next").addClass("endnext");
+          ifScroll = false;          
+          if (obj.position().left >= 0 ) {
+            $this.find(".scrool-product-list-prev").addClass("endnext");
           }else {
-            $this.find(".scrool-product-list-next").removeClass("endnext");
+            $this.find(".scrool-product-list-prev").removeClass("endnext");
           }
-          $this.find(".scrool-product-list-prev").removeClass("endprev");
+          $this.find(".scrool-product-list-next").removeClass("endprev");
         });
       }
-      if (dir=='left') {
+
+      if (dir=='right') {
+        console.log(obj.position().left, opts.parenWidth);
+        if (obj.position().left <= -opts.parenWidth) {
+          ifScroll = false;
+          return false;
+        }
         obj.animate({
-          scrollLeft:'-='+opts.itemWidth
+          left:'-='+opts.itemWidth
         },function  () {
-          if ($(this).scrollLeft() < 1) {
+          ifScroll = false;
+
+          if (obj.position().left <= -opts.parenWidth) {
             $this.parents("."+opts.wrapClass).find(".scrool-product-list-prev").addClass("endprev");
           }else {
             $this.parents("."+opts.wrapClass).find(".scrool-product-list-prev").removeClass("endprev");
           }
           $this.parents("."+opts.wrapClass).find(".scrool-product-list-next").removeClass("endnext");
+          
         });
       }
     }
@@ -273,7 +369,7 @@ $.fn.scollpic= function (options) {
 };
 
 })(jQuery);
-//-->
+
 </script>
 
 
