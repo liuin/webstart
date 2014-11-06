@@ -120,25 +120,6 @@ removeElement()
 }(jQuery);
 
 
-/** 
-* extend 图片滚动插件(有大图)
-* 
-* @package jquery
-* @author cuki13
-
-  $("#stroystroylist1").scollpic({
-    sdiv:"li",
-    long : 157,
-    height:150,
-    showbigimg: $("#stroystroylist1-img"), //显示大图的位置
-    wrapClass:'stroystroylist-list-wrap',
-    ppscollcallback:function  (objimg,obj) {
-      
-      //回调事件处理
-    }
-  });
-
-*/
 
 +(function($){
 
@@ -150,10 +131,13 @@ $.fn.scollpic= function (options) {
       itemTag : "li",
       itemWidth : 157,
       itemHeight : 150,
-      itemCount: 3,
+      itemCount: 2,
       bigImg : 'off',
       wrapClass :'scrollpic-wrap',
-      parenWidth : 'auto'
+      parenWidth : 'auto',
+      loop : false,
+      playSpeed : 3000,
+      autoPlay : false
     };
 
     var opts = $.extend({},defualts,options);
@@ -175,12 +159,12 @@ $.fn.scollpic= function (options) {
     
     $this.wrap($wrapObj);
 
-    var $arrowPrev=$('<a href="javascript:void(0);" class="scrool-item-list-prev endprev st"><span class="v-h">prev</span></a>');
-    var $arrowNext=$('<a href="javascript:void(0);" class="scrool-item-list-next st"><span class="v-h">next</span></a>');
+    var $arrowPrev=$('<a href="javascript:void(0);" class="scroll-item-list-prev endprev st"><span class="v-h">prev</span></a>');
+    var $arrowNext=$('<a href="javascript:void(0);" class="scroll-item-list-next st"><span class="v-h">next</span></a>');
 
     $this.parent().append($arrowPrev).append($arrowNext);
 
-    $this.wrap('<div class="scroll-warp" style="overflow:hidden;position:relative; height:' + opts.itemHeight + 'px; width:' + opts.parenWidth + 'px;"></div>');
+    $this.wrap('<div class="scroll-warp" style="overflow:hidden; position:relative; height:' + opts.itemHeight + 'px; width:' + opts.parenWidth + 'px;"></div>');
 
     $arrowPrev.click(function  () {
       scoll('left',$this);
@@ -190,14 +174,38 @@ $.fn.scollpic= function (options) {
       scoll('right',$this);
     });
 
-    var itemTotal=0;
+    //页码
+    var navItemCount = $this.find(opts.itemTag).length / opts.itemCount;
+    function  nav() {
+      var html = '<div class="banner-nav">';
+      for (var i = 0; i < navItemCount; i++) {
+        html += '<a class="' + (i == 0 ? 'current' : '' ) + ' sort-' + i + ' " data="'+ i +'" href="javascript:void(0);"><span>'+(i+1)+'</span></a>';
+      }
+      html += '</div>';
+      return $(html);
+    }
+    var $nav = nav();
+
+    $nav.appendTo($this.parent().parent());
+    $nav.find("a").click(function  () {
+      if ($(this).hasClass("current")) {
+        return false;
+      }else {
+        console.log($(this).index(), opts.itemCount, opts.itemWidth, $(this).index() * opts.itemCount * opts.itemWidth);
+        $(this).addClass("current").siblings().removeClass("current");
+        var scrollWidth = $(this).index() * opts.itemCount * opts.itemWidth;
+        scoll('nav', $this, scrollWidth);
+      }
+    })
+
+    //总长度
+    var itemTotal=0; 
 
     $this.find(opts.itemTag).last().css("padding-right","0");
     $this.find(opts.itemTag).each(function  () {     
       itemTotal+=$(this).outerWidth();
     });
-    $this.css({'position':'relative','width':itemTotal}); 
-    
+    $this.css({'position':'relative','width':itemTotal});    
 
     //moblie tounch手机事件
     var currntp = 0;
@@ -227,7 +235,6 @@ $.fn.scollpic= function (options) {
       }
       currntp = 0;
       pageX = 0;
-      
     });
 
     $this.parents("."+opts.wrapClass).bind('touchmove', function(e) {
@@ -241,7 +248,6 @@ $.fn.scollpic= function (options) {
     });
     
     //点击显示大图
-    
     $this.find(opts.itemTag).find("a").click(function  (e) {
       var $item = $(this);
       if (opts.bigImg && (opts.bigImg == 'off')) {
@@ -272,20 +278,25 @@ $.fn.scollpic= function (options) {
       }
     })
 
-    function  checkend(objsc) {      
-      if (objsc.prev().length < 1) {
-        $arrowPrve.addClass("endprev");
-      }else {
-        $arrowPrve.removeClass("endprev");
-      }
+    //循环
+    var onHover = false;
+    $this.hover(function  () {
+      onHover = true;
+    },function  () {
+      onHover = false;
+    })
 
-      if (objsc.next().length < 1) {
-        $arrowNext.addClass("endnext");
-      }else {
-        $arrowNext.removeClass("endnext");
+    function loopMain() {
+      if (opts.autoPlay == true) {
+        if (onHover == false) {
+          $arrowNext.trigger('click');
+        }
       }
     }
-
+    
+    var timecount = setInterval(function  () {
+      loopMain();
+    }, opts.playSpeed);
     
     var ajaxLoad = $('<div id="loading" class="loading yh"><i></i><span>加载中。。。</span></div>');
     var showImg = function (obj,data,objlink) {
@@ -320,7 +331,7 @@ $.fn.scollpic= function (options) {
     var ifScroll = false;
 
     //滚动函数
-    function scoll(dir,obj) {
+    function scoll(dir,obj,moveWidth) {
       if (ifScroll == true) {
         return false;
       }
@@ -332,39 +343,48 @@ $.fn.scollpic= function (options) {
           return false;
         }
         obj.animate({
-          left:'+='+opts.itemWidth
+          left:'+=' + opts.itemWidth
         },function  () {
-          ifScroll = false;          
-          if (obj.position().left >= 0 ) {
-            $this.find(".scrool-product-list-prev").addClass("endnext");
-          }else {
-            $this.find(".scrool-product-list-prev").removeClass("endnext");
-          }
-          $this.find(".scrool-product-list-next").removeClass("endprev");
+          ifScroll = false;
+          checkEnd();
         });
       }
 
       if (dir=='right') {
-        console.log(obj.position().left, opts.parenWidth);
-        if (obj.position().left <= -opts.parenWidth) {
+        if (obj.position().left <= - (itemTotal-opts.parenWidth)) {
           ifScroll = false;
           return false;
         }
         obj.animate({
-          left:'-='+opts.itemWidth
+          left:'-=' + opts.itemWidth
         },function  () {
           ifScroll = false;
-
-          if (obj.position().left <= -opts.parenWidth) {
-            $this.parents("."+opts.wrapClass).find(".scrool-product-list-prev").addClass("endprev");
-          }else {
-            $this.parents("."+opts.wrapClass).find(".scrool-product-list-prev").removeClass("endprev");
-          }
-          $this.parents("."+opts.wrapClass).find(".scrool-product-list-next").removeClass("endnext");
-          
+          checkEnd ();
         });
       }
+
+      if (dir == 'nav') {
+        obj.animate({
+          left : -moveWidth
+        },function  () {
+          ifScroll = false;
+          checkEnd ();
+        })
+      }
     }
+
+    function checkEnd () {
+      $this.parents("."+opts.wrapClass).find(".scroll-item-list-next").removeClass("endnext");
+      $this.parents("."+opts.wrapClass).find(".scroll-item-list-prev").removeClass("endprev");
+
+      if ($this.position().left >= 0 ) {
+        $this.parents("."+opts.wrapClass).find(".scroll-item-list-prev").addClass("endprev");
+      }
+      if ($this.position().left <= - (itemTotal-opts.parenWidth) ) {
+        $this.parents("."+opts.wrapClass).find(".scroll-item-list-next").addClass("endnext");
+      }
+    }
+
   });
 };
 
