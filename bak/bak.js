@@ -540,7 +540,51 @@ jQuery.extend(jQuery.easing, {
   }
 });
 
- /** 
+
+/*-- loading --*/
++function ($) {
+  'use strict';
+  function blockShow(objIn, objOut, callBack) {
+    if (objOut == 'none') {
+      objIn.show();
+      objIn[0].offsetWidth;
+      objIn.addClass("in");
+    }else {
+      objOut.removeClass("in").one('bsTransitionEnd', function  () {
+      $(this).hide();
+      objIn.show();
+      $(this)[0].offsetWidth;
+      objIn.addClass("in");
+      if (callBack) {
+        callBack();
+      }
+      }).emulateTransitionEnd(350);
+    }
+  }
+
+  function blockHide(objOut, callBack) {
+    objOut.removeClass("in").one('bsTransitionEnd', function  () {
+    $(this).hide();
+    if (callBack) {
+      callBack();
+    }
+    }).emulateTransitionEnd(350);
+  }
+
+  //全局加载按钮
+  $(function () {
+    $.loadingHide = function  () {
+      blockHide($("#loading-wrap"));
+    };
+    $.loadingShow = function  () {
+      blockShow($("#loading-wrap"),'none');
+    };
+    $.loadingHide();
+  })
+}(jQuery);
+
+
+/** 
 * extend 图片滚动插件(无大图)
 * 
 * @package scbanner
@@ -551,7 +595,6 @@ jQuery.extend(jQuery.easing, {
     loop: true
   });
 */
-
 ;(function($){  
   $.fn.scbanner = function (options) {  
     var defualts = { 

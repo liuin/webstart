@@ -119,6 +119,37 @@ removeElement()
 }(jQuery);
 
 
+/** 
+* extend 图片循环
+* 
+* @package jquery
+* @author cuki13
+   $("#scrollpic").scollpic({
+    itemTag : "li",
+    itemWidth : 157,
+    itemHeight : 250,
+    bigImg : 'off',
+    scollBack : function  (img , obj) {
+      //执行完回调事件处理
+    }
+   });
+
+  //css
+  .scrolllist li{
+    float:left;
+    width:157px;
+    list-style-type:none;
+  }
+  .scrolllist img {
+    width:100%;
+    height:100%;
+  }
+  .scroll-warp {
+    width:300px;
+  }
+*/
++(function($){
+
 /**
  * Checks for CSS support.
  * @private
@@ -155,9 +186,6 @@ function isTransition() {
 function isTransform() {
   return isStyleSupported([ 'transform', 'WebkitTransform', 'MozTransform', 'OTransform', 'msTransform' ])[0];
 }
-
-
-+(function($){
 
 $.fn.scollpic= function (options) {
   //计算长度
@@ -230,18 +258,19 @@ $.fn.scollpic= function (options) {
         return false;
       }else {
         $(this).addClass("current").siblings().removeClass("current");
+        var ind = $(this).index();
         var scrollWidth = $(this).index() * opts.itemCount * opts.itemWidth;
+        scrollWidth = scrollWidth + (opts.itemCount * opts.itemWidth);
+        console.log(scrollWidth,ind);
         scoll('nav', $this, scrollWidth);
       }
     })
-
 
     //如果循环
     if (opts.loop == true) {
       var totleCount = $this.find(opts.itemTag).length;
       var $prevClone = $this.find(opts.itemTag + ':gt(' + (totleCount - opts.itemCount - 1) + ')').clone().addClass("clone");
-      var $nextClone = $this.find(opts.itemTag + ':lt(' + opts.itemCount + ')').clone().addClass("clone").addClass("clone");
-      //console.log($this.find(opts.itemTag + ':lt(' + opts.itemCount + ')'));
+      var $nextClone = $this.find(opts.itemTag + ':lt(' + opts.itemCount + ')').clone().addClass("clone");
       $nextClone.appendTo($this);
       $prevClone.prependTo($this);
     }
@@ -307,7 +336,6 @@ $.fn.scollpic= function (options) {
       currentItemIndex = $this.find(opts.itemTag + '.current').index();
       
       if ((currentItemIndex!= -1) && (currentItemIndex!= 0) && (currentItemIndex!= ($this.find(opts.itemTag).length-1))) {
-
         var itemIndex = $item.parent().index();
         if (currentItemIndex > itemIndex) {
           $arrowPrev.trigger('click');
@@ -388,7 +416,7 @@ $.fn.scollpic= function (options) {
         $this.css("transition","0"); 
         scrollObj($this, -(opts.itemCount*opts.itemWidth),'nav', function  () {
           $this.css("transition","0.5s");
-        });     
+        });
       }
     }
 
@@ -406,7 +434,6 @@ $.fn.scollpic= function (options) {
 
     //滚动模式
     function  scrollObj(obj, value, navlong, callback) {
-      
       if (navlong) {
          leftVal = 0;
       }
@@ -444,7 +471,6 @@ $.fn.scollpic= function (options) {
           obj.emulateTransitionEnd(10);
         } 
         
-
       }else {
         obj.animate({
           "left": (leftVal + value)
@@ -461,9 +487,7 @@ $.fn.scollpic= function (options) {
       if (ifScroll == true) {
         return false;
       }
-
       ifScroll = true;
-
       if (dir=='left') {
         if (leftVal >= 0) {
           ifScroll = false;
@@ -477,9 +501,7 @@ $.fn.scollpic= function (options) {
           ifScroll = false;
           return false;
         }
-
         scrollObj(obj,-opts.itemWidth);
-
       }
 
       if (dir == 'nav') {
@@ -506,7 +528,6 @@ $.fn.scollpic= function (options) {
 
       }
     }
-
   });
 };
 
