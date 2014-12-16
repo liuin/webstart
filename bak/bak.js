@@ -174,7 +174,7 @@ $.fn.scollpic= function (options) {
         e.preventDefault();
         if (ifchlick) {
           ifchlick = false;
-          pageX = window.event.targetTouches[0].pageX;          
+          pageX = window.event.targetTouches[0].pageX;
         }else {
           return false;
         }
@@ -183,14 +183,9 @@ $.fn.scollpic= function (options) {
     //点击显示大图
     
     $(this).find(opts.sdiv).find("a").click(function  (e) {
-      
       if (opts.showbigimg && (opts.showbigimg == 'off')) {
-        
         return false;
       }else{
-
-      
-
 
       if(ifload == true || $(this).parent().hasClass('current')){ return false;}
       idbox = obj.find(opts.sdiv+'.current').index();
@@ -1497,6 +1492,8 @@ $.fn.scollpic= function (options) {
   .popbk-wrap {position: fixed; top: 0; left: 0; bottom: 0; right: 0; overflow: auto; z-index:100;}
   .popbk {position: absolute; top:0; left:50%;}
   .popbk .close {position:absolute;right:0;top:0;}
+  .fade.in { opacity: 1; }
+  .fade{opacity: 0;-webkit-transition: opacity .15s linear;-o-transition: opacity .15s linear;transition: opacity .15s linear;}
   $("#popbk2").data('ck.pokbk').open();
   $("#popbk2").data('ck.pokbk').close();
 */
@@ -1542,11 +1539,10 @@ $.fn.scollpic= function (options) {
   Popbk.prototype.open = function  () {
     this.close;
     var $this = this.el;
-    if ($this.length) { 
-      $(".popbk-wrap").show();
-      $(".popbk-wrap")[0].offsetWidth;
-      $(".popbk-wrap").addClass("in");
-
+    if ($this.length) {
+      $this.parents(".popbk-wrap").show();
+      $this.parents(".popbk-wrap")[0].offsetWidth;
+      $this.parents(".popbk-wrap").addClass("in");
     }
   }
 
@@ -1575,12 +1571,12 @@ $.fn.scollpic= function (options) {
     })
   }
 
-  $(document).ready(function() {
+  $(document).on('ready.popbk', function  () {
     var $this = $(dataString);
     Plugin.call($this,'build');
   })
-  
 })(jQuery);
+
 
 
 
@@ -1756,3 +1752,15 @@ $(document).ready(function() {
 })
   
 
+/*-- hovershow --*/
+function blockShow(objIn, callBack) {
+  $(".md-box.in").removeClass("in").one('bsTransitionEnd', function  () {
+    $(this).hide();
+    objIn.show();
+    $(this)[0].offsetWidth;
+    objIn.addClass("in");
+    if (callBack) {
+      callBack();
+    }
+  }).emulateTransitionEnd(350);
+}

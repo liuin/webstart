@@ -23,12 +23,13 @@
 </style>
 <div class="container">
   <ul class="scrolllist" id="scrollpic">
-    <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
-    <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
-    <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
-    <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
-    <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
-    <li><a href="#"><img src="images/all-car-g5.png" alt="" /></a></li>
+    <li><a href="#">1</a></li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="#">5</a></li>
+    <li><a href="#">6</a></li>
+    <li><a href="#">7</a></li>
   </ul><!-- /scrolllist -->
 
 </div><!-- /.container -->
@@ -47,7 +48,6 @@ $(document).ready(function() {
     scollBack : function  (img , obj) {
       //执行完回调事件处理
     }
-   
    });
 })
 
@@ -89,7 +89,6 @@ removeElement()
         return { end: transEndEventNames[name] }
       }
     }
-
     return false // explicit for ie8 (  ._.)
   }
 
@@ -120,6 +119,43 @@ removeElement()
 }(jQuery);
 
 
+/**
+ * Checks for CSS support.
+ * @private
+ * @param {Array} array - The CSS properties to check for.
+ * @returns {Array} - Contains the supported CSS property name and its index or `false`.
+ */
+function isStyleSupported(array) {
+  var p, s, fake = document.createElement('div'), list = array;
+  for (p in list) {
+    s = list[p];
+    if (typeof fake.style[s] !== 'undefined') {
+      fake = null;
+      return [ s, p ];
+    }
+  }
+  return [ false ];
+}
+
+/**
+ * Checks for CSS transition support.
+ * @private
+ * @todo Realy bad design
+ * @returns {Number}
+ */
+function isTransition() {
+  return isStyleSupported([ 'transition', 'WebkitTransition', 'MozTransition', 'OTransition' ])[0];
+}
+
+/**
+ * Checks for CSS transform support.
+ * @private
+ * @returns {String} The supported property name or false.
+ */
+function isTransform() {
+  return isStyleSupported([ 'transform', 'WebkitTransform', 'MozTransform', 'OTransform', 'msTransform' ])[0];
+}
+
 
 +(function($){
 
@@ -131,16 +167,18 @@ $.fn.scollpic= function (options) {
       itemTag : "li",
       itemWidth : 157,
       itemHeight : 150,
-      itemCount: 2,
+      itemCount: 4,
       bigImg : 'off',
+      loop : true,
       wrapClass :'scrollpic-wrap',
       parenWidth : 'auto',
-      loop : false,
       playSpeed : 3000,
       autoPlay : false
     };
 
     var opts = $.extend({},defualts,options);
+
+   
 
     var ifLoad = false; //是否加载
     var currentItemIndex = 0 ; //当前item索引
@@ -151,7 +189,7 @@ $.fn.scollpic= function (options) {
     var $wrapObj=$('<div class="' + opts.wrapClass + '"></div>');
 
     $wrapObj.css({'position':'relative','height':opts.itemHeight});
-    
+
     //加载箭头
     if (opts.itemWidth == 'auto') {
       opts.itemWidth = $(this).find(opts.sdiv).width();
@@ -191,12 +229,22 @@ $.fn.scollpic= function (options) {
       if ($(this).hasClass("current")) {
         return false;
       }else {
-        console.log($(this).index(), opts.itemCount, opts.itemWidth, $(this).index() * opts.itemCount * opts.itemWidth);
         $(this).addClass("current").siblings().removeClass("current");
         var scrollWidth = $(this).index() * opts.itemCount * opts.itemWidth;
         scoll('nav', $this, scrollWidth);
       }
     })
+
+
+    //如果循环
+    if (opts.loop == true) {
+      var totleCount = $this.find(opts.itemTag).length;
+      var $prevClone = $this.find(opts.itemTag + ':gt(' + (totleCount - opts.itemCount - 1) + ')').clone().addClass("clone");
+      var $nextClone = $this.find(opts.itemTag + ':lt(' + opts.itemCount + ')').clone().addClass("clone").addClass("clone");
+      //console.log($this.find(opts.itemTag + ':lt(' + opts.itemCount + ')'));
+      $nextClone.appendTo($this);
+      $prevClone.prependTo($this);
+    }
 
     //总长度
     var itemTotal=0; 
@@ -330,6 +378,84 @@ $.fn.scollpic= function (options) {
 
     var ifScroll = false;
 
+    var scrollEg = isTransform() ? isTransform()  : 'left';
+    
+    var leftVal = 0;
+
+    //预设循环模式
+    function  loopRest() {
+      if (opts.loop == true) {
+        $this.css("transition","0"); 
+        scrollObj($this, -(opts.itemCount*opts.itemWidth),'nav', function  () {
+          $this.css("transition","0.5s");
+        });     
+      }
+    }
+
+    function  loopRestEnd() {
+      if (opts.loop == true) {
+        $this.css("transition","0"); 
+        scrollObj($this, -(itemTotal - (opts.itemCount*opts.itemWidth)*2),'nav', function  () {
+          $this.css("transition","0.5s");
+        });
+      }
+    }
+
+
+    loopRest();
+
+    //滚动模式
+    function  scrollObj(obj, value, navlong, callback) {
+      
+      if (navlong) {
+         leftVal = 0;
+      }
+      cssSet = {};
+      if (scrollEg != 'left') {
+        var noPos = obj.css("");
+
+        switch (scrollEg) {
+        case 'transform':
+            cssSet = {'transform' : 'translateX(' + (leftVal + value) + 'px)'};
+        break
+        case 'WebkitTransform':
+            cssSet = {'WebkitTransform' : 'translateX(' + (leftVal + value) + 'px)'};
+        break
+        case 'MozTransform':
+            cssSet = {'MozTransform' : 'translateX(' + (leftVal + value) + 'px)'};
+        break
+        case 'OTransform':
+            cssSet = {'OTransform' : 'translateX(' + (leftVal + value) + 'px)'};
+        break
+        case 'msTransform':
+            cssSet = {'msTransform' : 'translateX(' + (leftVal + value) + 'px)'};
+        break 
+        default:
+        }
+        obj.css(cssSet).one('bsTransitionEnd', function(){
+          ifScroll = false;
+          leftVal += value;
+          if (callback) {
+            callback();
+          }
+          checkEnd();
+        })
+        if (navlong) {
+          obj.emulateTransitionEnd(10);
+        } 
+        
+
+      }else {
+        obj.animate({
+          "left": (leftVal + value)
+        },function  () {
+          ifScroll = false;
+          leftVal += value;
+          checkEnd();
+        })
+      }
+    }
+
     //滚动函数
     function scoll(dir,obj,moveWidth) {
       if (ifScroll == true) {
@@ -337,39 +463,27 @@ $.fn.scollpic= function (options) {
       }
 
       ifScroll = true;
+
       if (dir=='left') {
-        if (obj.position().left >= 0) {
+        if (leftVal >= 0) {
           ifScroll = false;
           return false;
         }
-        obj.animate({
-          left:'+=' + opts.itemWidth
-        },function  () {
-          ifScroll = false;
-          checkEnd();
-        });
+        scrollObj(obj,opts.itemWidth);
       }
 
       if (dir=='right') {
-        if (obj.position().left <= - (itemTotal-opts.parenWidth)) {
+        if (leftVal <= - (itemTotal-opts.parenWidth)) {
           ifScroll = false;
           return false;
         }
-        obj.animate({
-          left:'-=' + opts.itemWidth
-        },function  () {
-          ifScroll = false;
-          checkEnd ();
-        });
+
+        scrollObj(obj,-opts.itemWidth);
+
       }
 
       if (dir == 'nav') {
-        obj.animate({
-          left : -moveWidth
-        },function  () {
-          ifScroll = false;
-          checkEnd ();
-        })
+        scrollObj(obj, -moveWidth,'nav');
       }
     }
 
@@ -379,9 +493,17 @@ $.fn.scollpic= function (options) {
 
       if ($this.position().left >= 0 ) {
         $this.parents("."+opts.wrapClass).find(".scroll-item-list-prev").addClass("endprev");
+        if (opts.loop = true) {
+          loopRestEnd();
+        }
       }
       if ($this.position().left <= - (itemTotal-opts.parenWidth) ) {
         $this.parents("."+opts.wrapClass).find(".scroll-item-list-next").addClass("endnext");
+
+        if (opts.loop == true) {
+          loopRest();
+        }
+
       }
     }
 

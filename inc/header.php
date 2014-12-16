@@ -79,11 +79,13 @@
 <![endif]-->
   <?php
     //加载less
+    /*
     require "less.php/lessc.inc.php";
     $less = new lessc;    
     $less->checkedCompile("less/bootstrap.less", "css/bootstrap.css");
     $less->checkedCompile("less/style.less", "css/style.css");
     $less->checkedCompile("less/ie.less", "css/ie.css");
+    */
   ?>
 </head>
 

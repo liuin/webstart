@@ -542,17 +542,65 @@ table {
 .clearfix:after{
   clear: both;
 }
-
 .clearfix{
   zoom: 1;
 }
 
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('../fonts/glyphicons-halflings-regular.eot');
+  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
 
+/*-- Globals --*/
 
 noscript {
   text-align: center;
-  line-height: 30px;
-  background: #f60;
+  display: block;
+  background: red;
   color: #fff;
-  font-size: 14px;
+  line-height: 30px;
+}
+.fl {
+  float: left;
+  display: inline;
+}
+.fr {
+  float: right;
+  display: inline;
+}
+.none {
+  display: none;
+}
+.v-h {
+  visibility: hidden;
+}
+.textb {
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+.textep {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.unselect {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+.yh {
+  font-family: "Microsoft YaHei", "微软雅黑", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
+}
+.st {
+  font-family: "\5B8B\4F53", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
+}
+.ht {
+  font-family: "\9ED1\4F53", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
+}
+.ar {
+  font-family: "Arial", "Lucida Grande", "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", sans-serif;
 }
