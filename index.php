@@ -148,8 +148,8 @@ removeElement()
     width:300px;
   }
 */
-+(function($){
 
++(function($){
 /**
  * Checks for CSS support.
  * @private

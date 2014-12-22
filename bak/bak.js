@@ -65,186 +65,266 @@ removeElement()
 
 }(jQuery);
 
+
 /** 
-* extend 图片滚动插件(有大图)
+* extend 图片循环
 * 
 * @package jquery
 * @author cuki13
-
-  $("#stroystroylist1").scollpic({
-    sdiv:"li",
-    long : 157,
-    height:150,
-    showbigimg: $("#stroystroylist1-img"), //显示大图的位置
-    wrapClass:'stroystroylist-list-wrap',
-    ppscollcallback:function  (objimg,obj) {
-      
-      //回调事件处理
+   $("#scrollpic").scollpic({
+    itemTag : "li",
+    itemWidth : 157,
+    itemHeight : 250,
+    bigImg : 'off',
+    scollBack : function  (img , obj) {
+      //执行完回调事件处理
     }
-  });
+   });
 
+  //css
+  .scrolllist li{
+    float:left;
+    width:157px;
+    list-style-type:none;
+  }
+  .scrolllist img {
+    width:100%;
+    height:100%;
+  }
+  .scroll-warp {
+    width:300px;
+  }
 */
+
 +(function($){
+/**
+ * Checks for CSS support.
+ * @private
+ * @param {Array} array - The CSS properties to check for.
+ * @returns {Array} - Contains the supported CSS property name and its index or `false`.
+ */
+function isStyleSupported(array) {
+  var p, s, fake = document.createElement('div'), list = array;
+  for (p in list) {
+    s = list[p];
+    if (typeof fake.style[s] !== 'undefined') {
+      fake = null;
+      return [ s, p ];
+    }
+  }
+  return [ false ];
+}
+
+/**
+ * Checks for CSS transition support.
+ * @private
+ * @todo Realy bad design
+ * @returns {Number}
+ */
+function isTransition() {
+  return isStyleSupported([ 'transition', 'WebkitTransition', 'MozTransition', 'OTransition' ])[0];
+}
+
+/**
+ * Checks for CSS transform support.
+ * @private
+ * @returns {String} The supported property name or false.
+ */
+function isTransform() {
+  return isStyleSupported([ 'transform', 'WebkitTransform', 'MozTransform', 'OTransform', 'msTransform' ])[0];
+}
 
 $.fn.scollpic= function (options) {
-  var obj = $(this);
-  var defualts = {
-      sdiv:"li",
-      showbigimg: 'on',
-      long: 'auto',
-      wrapClass:'scollpic'
+  //计算长度
+  $(this).each(function  () {
+    var $this = $(this);
+    var defualts = {
+      itemTag : "li",
+      itemWidth : 157,
+      itemHeight : 150,
+      itemCount: 4,
+      bigImg : 'off',
+      loop : true,
+      wrapClass :'scrollpic-wrap',
+      parenWidth : 'auto',
+      playSpeed : 3000,
+      autoPlay : false
     };
 
-  var opts = $.extend({},defualts,options);
+    var opts = $.extend({},defualts,options);
 
-  var wrap_obj=$('<div class="'+opts.wrapClass+'"></div>');
-  wrap_obj.css({'position':'relative','height':opts.height});
-  var longk = 0;
-  var idbox = 0 ;
-  //计算长度
-  obj.each(function  () {
+   
+
+    var ifLoad = false; //是否加载
+    var currentItemIndex = 0 ; //当前item索引
+    if (opts.parenWidth == 'auto') {
+      opts.parenWidth = parseInt(opts.itemCount * opts.itemWidth);
+    }
+
+    var $wrapObj=$('<div class="' + opts.wrapClass + '"></div>');
+
+    $wrapObj.css({'position':'relative','height':opts.itemHeight});
+
     //加载箭头
-    if (opts.long == 'auto') {
-      opts.long = $(this).find(opts.sdiv).width();
+    if (opts.itemWidth == 'auto') {
+      opts.itemWidth = $(this).find(opts.sdiv).width();
     }
     
-    $(this).wrap(wrap_obj);
-    var arrow_prev=$('<a href="javascript:void(0);" class="scrool-product-list-prev endprev st"><span class="v-h">prev</span></a>');
-    var arrow_next=$('<a href="javascript:void(0);" class="scrool-product-list-next st"><span class="v-h">next</span></a>');
-    $(this).parent().append(arrow_prev).append(arrow_next);
-    $(this).wrap('<div class="scroll-warp" style="overflow:hidden;position:relative; height:'+opts.height+'px;"></div>');
+    $this.wrap($wrapObj);
 
-    arrow_prev.click(function  () {
-      scoll('left',$(this).siblings('div'));
+    var $arrowPrev=$('<a href="javascript:void(0);" class="scroll-item-list-prev endprev st"><span class="v-h">prev</span></a>');
+    var $arrowNext=$('<a href="javascript:void(0);" class="scroll-item-list-next st"><span class="v-h">next</span></a>');
+
+    $this.parent().append($arrowPrev).append($arrowNext);
+
+    $this.wrap('<div class="scroll-warp" style="overflow:hidden; position:relative; height:' + opts.itemHeight + 'px; width:' + opts.parenWidth + 'px;"></div>');
+
+    $arrowPrev.click(function  () {
+      scoll('left',$this);
     });
 
-    arrow_next.click(function  () {
-      scoll('right',$(this).siblings('div'));
+    $arrowNext.click(function  () {
+      scoll('right',$this);
     });
 
-    var obj_width=0;
+    //页码
+    var navItemCount = $this.find(opts.itemTag).length / opts.itemCount;
+    function  nav() {
+      var html = '<div class="banner-nav">';
+      for (var i = 0; i < navItemCount; i++) {
+        html += '<a class="' + (i == 0 ? 'current' : '' ) + ' sort-' + i + ' " data="'+ i +'" href="javascript:void(0);"><span>'+(i+1)+'</span></a>';
+      }
+      html += '</div>';
+      return $(html);
+    }
+    var $nav = nav();
 
-    $(this).find(opts.sdiv).last().css("padding-right","0");
-    $(this).find(opts.sdiv).each(function  () {     
-      obj_width+=$(this).outerWidth();
+    $nav.appendTo($this.parent().parent());
+    $nav.find("a").click(function  () {
+      if ($(this).hasClass("current")) {
+        return false;
+      }else {
+        $(this).addClass("current").siblings().removeClass("current");
+        var ind = $(this).index();
+        var scrollWidth = $(this).index() * opts.itemCount * opts.itemWidth;
+        scrollWidth = scrollWidth + (opts.itemCount * opts.itemWidth);
+        console.log(scrollWidth,ind);
+        scoll('nav', $this, scrollWidth);
+      }
+    })
+
+    //如果循环
+    if (opts.loop == true) {
+      var totleCount = $this.find(opts.itemTag).length;
+      var $prevClone = $this.find(opts.itemTag + ':gt(' + (totleCount - opts.itemCount - 1) + ')').clone().addClass("clone");
+      var $nextClone = $this.find(opts.itemTag + ':lt(' + opts.itemCount + ')').clone().addClass("clone");
+      $nextClone.appendTo($this);
+      $prevClone.prependTo($this);
+    }
+
+    //总长度
+    var itemTotal=0; 
+
+    $this.find(opts.itemTag).last().css("padding-right","0");
+    $this.find(opts.itemTag).each(function  () {     
+      itemTotal+=$(this).outerWidth();
     });
-    longk = obj_width;
-    $(this).css({'position':'absolute','width':obj_width}); 
-    
+    $this.css({'position':'relative','width':itemTotal});    
 
     //moblie tounch手机事件
     var currntp = 0;
     var pageX = 0;
     var ifchlick = false;
       
-      $("."+opts.wrapClass).bind("touchstart",function  (e) {
-        
-        currntp = window.event.touches[0].pageX;
-        ifchlick = true;
-        e.preventDefault();
-      });
+    $this.parents("."+opts.wrapClass).bind("touchstart",function  (e) {
+       currntp = window.event.touches[0].pageX;
+       ifchlick = true;
+       e.preventDefault();
+     });
 
-       $("."+opts.wrapClass).bind('touchend', function(e) {
-         if (pageX == 0) {
-           return false;
-         }
-         e.preventDefault();
+    $this.parents("."+opts.wrapClass).bind('touchend', function(e) {
+      if (pageX == 0) {
+        return false;
+      }
+      e.preventDefault();
+      ifchlick = false;
+      var widthStep = 10;
+      
+      if ((Math.abs(currntp - pageX) >= width_step)) {
+        if (currntp - pageX >= width_step) {
+          $arrowNext.trigger('click');          
+        } else {          
+          $arrowPrev.trigger('click');
+        }
+      }
+      currntp = 0;
+      pageX = 0;
+    });
+
+    $this.parents("."+opts.wrapClass).bind('touchmove', function(e) {
+      e.preventDefault();
+      if (ifchlick) {
         ifchlick = false;
-        var width_step = 10;
-        //alert(currntp+','+pageX);
-        
-        if ((Math.abs(currntp - pageX) >= width_step)) {
-          if (currntp - pageX >= width_step) {
-            arrow_next.trigger('click','one');
-            
-            //$(".show-pic .prev").trigger('click');
-          } else {
-            
-            arrow_prev.trigger('click','one');
-            //$(".show-pic .next").trigger('click');
-          }
-          
-        }
-        currntp = 0;
-        pageX = 0;
-        
-      });
-
-      $("."+opts.wrapClass).bind('touchmove', function(e) {
-        e.preventDefault();
-        if (ifchlick) {
-          ifchlick = false;
-          pageX = window.event.targetTouches[0].pageX;
-        }else {
-          return false;
-        }
-      });
+        pageX = window.event.targetTouches[0].pageX;
+      }else {
+        return false;
+      }
+    });
     
     //点击显示大图
-    
-    $(this).find(opts.sdiv).find("a").click(function  (e) {
-      if (opts.showbigimg && (opts.showbigimg == 'off')) {
+    $this.find(opts.itemTag).find("a").click(function  (e) {
+      var $item = $(this);
+      if (opts.bigImg && (opts.bigImg == 'off')) {
         return false;
       }else{
 
-      if(ifload == true || $(this).parent().hasClass('current')){ return false;}
-      idbox = obj.find(opts.sdiv+'.current').index();
-      
-      if ((idbox!= -1) && (idbox!= 0) && (idbox!= (obj.find(opts.sdiv).length-1))) {
+      if(ifLoad == true || $item.parent().hasClass('current')){ return false;}
 
-        var idnow = $(this).parent().index();
-        if (idbox>idnow) {
-          arrow_prev.trigger('click');
+      currentItemIndex = $this.find(opts.itemTag + '.current').index();
+      
+      if ((currentItemIndex!= -1) && (currentItemIndex!= 0) && (currentItemIndex!= ($this.find(opts.itemTag).length-1))) {
+        var itemIndex = $item.parent().index();
+        if (currentItemIndex > itemIndex) {
+          $arrowPrev.trigger('click');
         }else {
-          arrow_next.trigger('click');
+          $arrowNext.trigger('click');
         }
       }
 
-      $(this).parent().siblings('li').removeClass('current');
-      $(this).parent().addClass('current');
+      $item.parent().siblings('li').removeClass('current');
+      $item.parent().addClass('current');
 
-      if (opts.loadvd) {
-        opts.loadvd($(this));
-        return false;
-      }
-
-
-
-      if (opts.ppscollcallbackVideo) {
-        opts.ppscollcallbackVideo();
-        return false;
-      }
-
-      if (opts.showbigimg) {
-        show_img(opts.showbigimg,$(this).attr("href"),$(this));
-      }
-      
+      if (opts.bigImg) {
+        showImg(opts.bigImg,$item.attr("href"),$item);
+      }      
       e.preventDefault();
-
       }
     })
-    function  checkend(objsc) {
-      
-      if (objsc.prev().length < 1) {
-        arrow_prev.addClass("endprev");
-      }else {
-        arrow_prev.removeClass("endprev");
-      }
 
-      if (objsc.next().length < 1) {
-        arrow_next.addClass("endnext");
-      }else {
-        arrow_next.removeClass("endnext");
-      }
+    //循环
+    var onHover = false;
+    $this.hover(function  () {
+      onHover = true;
+    },function  () {
+      onHover = false;
+    })
 
+    function loopMain() {
+      if (opts.autoPlay == true) {
+        if (onHover == false) {
+          $arrowNext.trigger('click');
+        }
+      }
     }
-
-    var ifload = false;
-    var ajax_load = $('<div id="loading" class="loading yh"><i></i><span>加载中。。。</span></div>');
-    var show_img = function (obj,data,objlink) {
+    
+    var timecount = setInterval(function  () {
+      loopMain();
+    }, opts.playSpeed);
+    
+    var ajaxLoad = $('<div id="loading" class="loading yh"><i></i><span>加载中。。。</span></div>');
+    var showImg = function (obj,data,objlink) {
       var img = $('<img src="' + data + '" />');
-
-      ajax_load.insertBefore(obj);
+      ajaxLoad.insertBefore(obj);
       ifload = true;
       
       if (img[0].complete) {
@@ -257,68 +337,145 @@ $.fn.scollpic= function (options) {
 
       }else {
         img.load(function  () {
-        if (opts.ppscollcallback) {
-          opts.ppscollcallback(obj,objlink);
+        if (opts.scollBack) {
+          opts.scollBack(obj,objlink);
         }
-
-
         obj.hide().attr('src', data).fadeIn();
-        
-        ajax_load.detach();
+        ajaxLoad.detach();
         ifload = false;
         }).error(function(){
-          ajax_load.detach();
+          ajaxLoad.detach();
           alert('很抱歉,加载失败');
           ifload = false;
         });
       }
     }
 
-  });
-  var scolllong = obj.width() - obj.parents().width() - 10;
-  var that = $(this).parent().parent(); 
-  //滚动函数
-  function scoll(dir,obj) {
-    if (dir=='right') {
+    var ifScroll = false;
 
-      obj.animate({
-        scrollLeft:'+='+opts.long
-        //scrollLeft:longk-772
-      },function  () {
-        //console.log($(this).scrollLeft(),scolllong);
-        if ($(this).scrollLeft() > scolllong) {
-          that.find(".scrool-product-list-next").addClass("endnext");
-        }else {
-          
-          that.find(".scrool-product-list-next").removeClass("endnext");
-        }
-        that.find(".scrool-product-list-prev").removeClass("endprev");
+    var scrollEg = isTransform() ? isTransform()  : 'left';
+    
+    var leftVal = 0;
 
-        if (opts.ppscollcallbackCount) {
-          opts.ppscollcallbackCount(obj,Math.abs(obj.scrollLeft()/opts.long));
-          return false;
-        }
-      });
+    //预设循环模式
+    function  loopRest() {
+      if (opts.loop == true) {
+        $this.css("transition","0"); 
+        scrollObj($this, -(opts.itemCount*opts.itemWidth),'nav', function  () {
+          $this.css("transition","0.5s");
+        });
+      }
     }
-    if (dir=='left') {
-      obj.animate({
-        scrollLeft:'-='+opts.long
-      },function  () {
+
+    function  loopRestEnd() {
+      if (opts.loop == true) {
+        $this.css("transition","0"); 
+        scrollObj($this, -(itemTotal - (opts.itemCount*opts.itemWidth)*2),'nav', function  () {
+          $this.css("transition","0.5s");
+        });
+      }
+    }
+
+
+    loopRest();
+
+    //滚动模式
+    function  scrollObj(obj, value, navlong, callback) {
+      if (navlong) {
+         leftVal = 0;
+      }
+      cssSet = {};
+      if (scrollEg != 'left') {
+        var noPos = obj.css("");
+
+        switch (scrollEg) {
+        case 'transform':
+            cssSet = {'transform' : 'translateX(' + (leftVal + value) + 'px)'};
+        break
+        case 'WebkitTransform':
+            cssSet = {'WebkitTransform' : 'translateX(' + (leftVal + value) + 'px)'};
+        break
+        case 'MozTransform':
+            cssSet = {'MozTransform' : 'translateX(' + (leftVal + value) + 'px)'};
+        break
+        case 'OTransform':
+            cssSet = {'OTransform' : 'translateX(' + (leftVal + value) + 'px)'};
+        break
+        case 'msTransform':
+            cssSet = {'msTransform' : 'translateX(' + (leftVal + value) + 'px)'};
+        break 
+        default:
+        }
+        obj.css(cssSet).one('bsTransitionEnd', function(){
+          ifScroll = false;
+          leftVal += value;
+          if (callback) {
+            callback();
+          }
+          checkEnd();
+        })
+        if (navlong) {
+          obj.emulateTransitionEnd(10);
+        } 
         
-        if ($(this).scrollLeft() < 1) {
-          that.find(".scrool-product-list-prev").addClass("endprev");
-        }else {
-          
-          that.find(".scrool-product-list-prev").removeClass("endprev");
-        }
-        that.find(".scrool-product-list-next").removeClass("endnext");
-        if (opts.ppscollcallbackCount) {
-          opts.ppscollcallbackCount(obj,Math.abs(obj.scrollLeft()/opts.long));
+      }else {
+        obj.animate({
+          "left": (leftVal + value)
+        },function  () {
+          ifScroll = false;
+          leftVal += value;
+          checkEnd();
+        })
+      }
+    }
+
+    //滚动函数
+    function scoll(dir,obj,moveWidth) {
+      if (ifScroll == true) {
+        return false;
+      }
+      ifScroll = true;
+      if (dir=='left') {
+        if (leftVal >= 0) {
+          ifScroll = false;
           return false;
         }
-      });
+        scrollObj(obj,opts.itemWidth);
+      }
+
+      if (dir=='right') {
+        if (leftVal <= - (itemTotal-opts.parenWidth)) {
+          ifScroll = false;
+          return false;
+        }
+        scrollObj(obj,-opts.itemWidth);
+      }
+
+      if (dir == 'nav') {
+        scrollObj(obj, -moveWidth,'nav');
+      }
     }
-  }
+
+    function checkEnd () {
+      $this.parents("."+opts.wrapClass).find(".scroll-item-list-next").removeClass("endnext");
+      $this.parents("."+opts.wrapClass).find(".scroll-item-list-prev").removeClass("endprev");
+
+      if ($this.position().left >= 0 ) {
+        $this.parents("."+opts.wrapClass).find(".scroll-item-list-prev").addClass("endprev");
+        if (opts.loop = true) {
+          loopRestEnd();
+        }
+      }
+      if ($this.position().left <= - (itemTotal-opts.parenWidth) ) {
+        $this.parents("."+opts.wrapClass).find(".scroll-item-list-next").addClass("endnext");
+
+        if (opts.loop == true) {
+          loopRest();
+        }
+
+      }
+    }
+  });
 };
 
 })(jQuery);
@@ -544,33 +701,6 @@ jQuery.extend(jQuery.easing, {
 /*-- loading --*/
 +function ($) {
   'use strict';
-  function blockShow(objIn, objOut, callBack) {
-    if (objOut == 'none') {
-      objIn.show();
-      objIn[0].offsetWidth;
-      objIn.addClass("in");
-    }else {
-      objOut.removeClass("in").one('bsTransitionEnd', function  () {
-      $(this).hide();
-      objIn.show();
-      $(this)[0].offsetWidth;
-      objIn.addClass("in");
-      if (callBack) {
-        callBack();
-      }
-      }).emulateTransitionEnd(350);
-    }
-  }
-
-  function blockHide(objOut, callBack) {
-    objOut.removeClass("in").one('bsTransitionEnd', function  () {
-    $(this).hide();
-    if (callBack) {
-      callBack();
-    }
-    }).emulateTransitionEnd(350);
-  }
-
   //全局加载按钮
   $(function () {
     $.loadingHide = function  () {
@@ -582,248 +712,6 @@ jQuery.extend(jQuery.easing, {
     $.loadingHide();
   })
 }(jQuery);
-
-
-/** 
-* extend 图片滚动插件(无大图)
-* 
-* @package scbanner
-* @author cuki13
-  var sl = $('#slider1').scbanner({
-    showType: 'scroll',
-    scrollWidth: 1680,
-    loop: true
-  });
-*/
-;(function($){  
-  $.fn.scbanner = function (options) {  
-    var defualts = { 
-      scrollWidth: 980,     //滚动距离
-      warpcss: 'banner1', //外部包含CSS
-      auto: true,     //是否自动,
-      speed:  5000,     //间隔5秒
-      showType: 'scroll',
-      slderafter : function  () {
-      },
-      loop:false
-      
-    };  
-    var opts = $.extend({}, defualts, options);  
-    var obj = $(this);
-
-    //生成控制器
-    obj.wrap('<div class="'+opts.warpcss+'"></div>');
-    //如果循环
-    if (opts.loop == true) {
-      var cprev = obj.find('li').first().clone().addClass("clone");
-      var cnext = obj.find('li').last().clone().addClass("clone");
-      obj.append(cprev);
-      obj.prepend(cnext);
-    }
-    //生成页码
-    function  nav(obj) {
-      var nav_html = '<div class="banner-nav">';
-      for (var i = 0; i < obj.find('li').length; i++) {
-        nav_html += '<a class="'+(i == 0 ? 'current' : '')+' sort-'+ i +' " data="'+i+'" href="javascript:void(0);"><span>'+(i+1)+'</span></a>';
-      }
-      nav_html += '</div>';
-      return nav_html;
-    }
-
-    
-    
-
-    obj.css('width',opts.scrollWidth*obj.find('li').length);
-    var timecount = '';
-
-    
-
-    var nav=$(nav(obj));
-    var lgnav = nav.length;
-    
-    
-    nav.find('a').click(function  (e) {
-      if ($(this).hasClass('current')) {
-        return false;
-      }else {
-        var w = $(this).attr('data');
-        var that = $(this);
-        obj_scroll(obj,-w,opts.showType,function  () {
-          
-          that.siblings('.current').removeClass('current'); 
-          that.addClass('current');
-          if (opts.slderafter) {
-            
-            var ind = that.attr("data");
-            var gli = obj.find('li').eq(ind);
-            opts.slderafter(gli);
-            
-          }
-          
-          if (opts.showType == 'fade') {
-            return false;
-          }
-          
-          
-
-          if (w == '0') {
-            
-            opts.showType = 'noanmate';
-            
-            var gind = nav.find("a").length-2;
-            nav.find("a").eq(gind).trigger('click');
-            opts.showType = 'scroll';
-            
-          }
-
-          if (w == nav.find("a").length - 1 ) {           
-            opts.showType = 'noanmate';
-            nav.find("a").eq(1).trigger('click');
-            opts.showType = 'scroll';
-          }
-
-        });
-        
-      }
-      e.preventDefault(); 
-    })
-    var wpauto = true;
-    //自动滚动函数
-
-    obj.parent().parent().delegate('.'+opts.warpcss,'mouseenter',function  () {
-        wpauto = false;
-        clearInterval(timecount);
-      }).delegate('.'+opts.warpcss,'mouseleave',function  () {
-        wpauto = true;
-          timecount = setInterval(function  () {
-          loop_main();
-        }, opts.speed);
-    })
-
-    function loop_main() {
-      if (wpauto) {
-        click_next();
-      }
-    }
-    //循环
-    timecount = setInterval(function  () {
-      loop_main();
-    }, opts.speed);
-    
-    function click_next() {
-      var n = nav.find('a.current').next();
-      if (n.length > 0) {
-        n.trigger('click');
-      }else {
-        if (opts.loop == false){
-        nav.find('a').eq(0).trigger('click');
-        }
-      }
-    }
-
-    function click_prev() {
-      var n = nav.find('a.current').prev();
-      if (n.length > 0) {
-        n.trigger('click');
-      }else {
-        if (opts.loop == false){
-        nav.find('a').last().trigger('click');
-        }
-      }
-    }
-
-    //moblie tounch
-    var currntp = 0;
-    var pageX;
-    var ifchlick = false;
-    
-    $("."+opts.warpcss).bind("touchstart",function  (e) {
-      $("."+opts.warpcss).trigger("mouseenter");
-      currntp = window.event.touches[0].pageX;
-      ifchlick = true;
-    });
-
-     $("."+opts.warpcss).bind('touchend', function(e) {
-      ifchlick = false;
-      var width_step = 5;
-      if (Math.abs(currntp - pageX) >= width_step) {
-        if (currntp - pageX >= width_step) {
-          click_prev();
-        } else {
-          click_next();
-        }
-        $("."+opts.warpcss).trigger("mouseleave");
-      }
-    });
-
-    $("."+opts.warpcss).bind('touchmove', function(e) {
-      if (ifchlick) {
-        ifchlick = false;
-        pageX = window.event.targetTouches[0].pageX;          
-      }else {
-        return false;
-      }
-    });
-    
-    nav.insertAfter(obj);
-
-    //显示
-    function obj_scroll(obj,w,type,callback) {
-      switch (type) {
-      case 'scroll':
-        
-        obj.stop().animate({'left':opts.scrollWidth*w},800,'easeInOutExpo',function  () {
-          if (callback) {
-            callback();
-          }
-        });
-      break
-      case 'fade':
-        /*
-        obj.css({'left':opts.scrollWidth*w}).hide().fadeIn(function  () {
-          if (callback){
-            callback();
-          }
-        });
-        */
-        
-      case 'noanmate':
-        
-        obj.stop().css({'left':opts.scrollWidth*w});
-          if (callback) {
-            callback();
-          }
-      break
-      default:
-      }
-    }
-
-    if (opts.loop == true) {
-      opts.showType = 'noanmate';
-      nav.find("a").eq(1).trigger('click');
-    
-      opts.showType = 'scroll';
-    }
-    
-    var contr = {
-      "prev": function  () {
-        click_prev();
-      },
-      "next": function  () {
-        click_next();
-      },
-      "scroll": function  (val) {
-        wpauto = val;
-        if (val == 'false') {
-          wpauto = false;
-          clearInterval(timecount);
-        }
-      }
-    }
-    return contr;
-  };  
-})(jQuery);
-
 
 
 /** 
@@ -980,18 +868,11 @@ canvasbg.width=w;
 canvas.height=h;
 canvasbg.height=h;
 
-    
-
-
-
 ctx=canvas.getContext('2d');
 ctxbg=canvasbg.getContext('2d');
 ctx.fillStyle='transparent';
 ctx.fillRect(0, 0, w, h);
 layer(ctx);
-
-//ctx.globalCompositeOperation = 'destination-out';
-//ctx.globalCompositeOperation = 'source-out';
 
 canvas.addEventListener('touchstart', eventDown);
 canvas.addEventListener('touchend', eventUp);
@@ -1034,7 +915,7 @@ img.src = hideimg;
 
 
 /** 
-* extend 绝对定位
+* extend ifIE6
 * @author cuki13
 */
 function ie6() {
@@ -1099,335 +980,6 @@ function ie6() {
   };  
 })(jQuery);
 
-/** 
-* extend 图片滚动插件(CSS3滚动)
-* 
-* @package jquery
-* @author cuki13
-
-*/
-+(function($){
-
-$.fn.scollpic= function (options) {
-  var obj = $(this);
-  var defualts = {
-      sdiv:"li",
-      showbigimg: 'off',
-      long: 'auto',
-      wrapClass:'scollpic'
-    };
-  var gtras = 0;
-  var opts = $.extend({},defualts,options);
-
-  var wrap_obj=$('<div class="'+opts.wrapClass+'"></div>');
-  wrap_obj.css({'position':'relative','height':opts.height});
-  var longk = 0;
-  var idbox = 0 ;
-  //计算长度
-  obj.each(function  () {
-    //加载箭头
-    if (opts.long == 'auto') {
-      opts.long = $(this).find(opts.sdiv).width();
-    }
-    
-    $(this).wrap(wrap_obj);
-    var arrow_prev=$('<a href="javascript:void(0);" class="scrool-product-list-prev endprev st"><span class="v-h">prev</span></a>');
-    var arrow_next=$('<a href="javascript:void(0);" class="scrool-product-list-next st"><span class="v-h">next</span></a>');
-    $(this).parent().append(arrow_prev).append(arrow_next);
-    $(this).wrap('<div class="scroll-warp" style="overflow:hidden;position:relative; height:'+opts.height+'px;"></div>');
-    
-    arrow_prev.click(function  (e) {  
-      scoll('left',$(this).siblings('div'));
-    });
-
-    arrow_next.click(function  () {
-      scoll('right',$(this).siblings('div'));
-    });
-
-    var obj_width=0;
-
-    $(this).find(opts.sdiv).last().css("padding-right","0");
-    $(this).find(opts.sdiv).each(function  () {     
-      obj_width+=140;
-    });
-    longk = obj_width;
-    $(this).css({'position':'absolute','width':obj_width}); 
-    
-
-    //moblie tounch
-    /*
-    var currntp = 0;
-    var pageX = 0;
-    var ifchlick = false;
-      
-      $("."+opts.wrapClass).bind("touchstart",function  (e) {
-        
-        currntp = window.event.touches[0].pageX;
-        ifchlick = true;
-        e.preventDefault();
-      });
-
-       $("."+opts.wrapClass).bind('touchend', function(e) {
-         if (pageX == 0) {
-           return false;
-         }
-         e.preventDefault();
-        ifchlick = false;
-        var width_step = 10;
-        //alert(currntp+','+pageX);
-        
-        if ((Math.abs(currntp - pageX) >= width_step)) {
-          if (currntp - pageX >= width_step) {
-            arrow_next.trigger('click','one');
-            
-            //$(".show-pic .prev").trigger('click');
-          } else {
-            
-            arrow_prev.trigger('click','one');
-            //$(".show-pic .next").trigger('click');
-          }
-          
-        }
-        currntp = 0;
-        pageX = 0;
-        
-      });
-      */
-
-      $("."+opts.wrapClass).bind('touchmove', function(e) {
-        e.preventDefault();
-        if (ifchlick) {
-          ifchlick = false;
-          pageX = window.event.targetTouches[0].pageX;          
-        }else {
-          return false;
-        }
-      });
-
-    
-    /*
-    function getCenter (objlk) {
-      
-      var wid = $(window).width();
-      
-      if (wid > 420) {
-        return false;
-      }
-      var centerpos = wid - 140;
-      centerpos = centerpos/2; 
-      var trlong = centerpos - objlk.offset().left - Math.abs(gtras);
-      console.log(trlong,gtras);
-      gtras = trlong;
-      $("#imglist").css({
-        "transition" : "0.5s",
-        "transform" : "translateX("+ trlong +"px)"
-      })
-      
-    }
-    */
-    $("#imglist").css({
-        "transition" : "0.5s"
-    })
-    function getCenter (objlk) {
-      
-      var wid = $(window).width();
-      
-      if (wid > 700) {
-        return false;
-      }
-      var centerpos = wid - 140;
-      centerpos = centerpos/2; 
-      var trlong = objlk.offset().left - centerpos;
-            
-      $("#imglist").css({
-        "transform" : "translateX("+ (gtras - trlong) +"px)"
-      })
-      gtras = gtras - trlong;
-      
-    }
-    
-    //点击显示大图
-    
-    $(this).find(opts.sdiv).find("label").click(function  (e) {
-      
-      if (opts.showbigimg && (opts.showbigimg == 'off')) {
-        $(this).find("input").attr("checked","checked").change();
-        return true;
-      }else{
-      if(ifload == true || $(this).parent().hasClass('current')){ return true;}
-      idbox = obj.find(opts.sdiv+'.current').index();
-      var idnow = $(this).parent().index();
-      if (idbox>idnow) {
-        //arrow_prev.trigger('click');
-      }else {
-        //arrow_next.trigger('click');
-      }
-      
-      $(this).find("input").attr("checked","checked").change();
-
-      $(this).parent().siblings('li').removeClass('current');
-      $(this).parent().addClass('current');
-      
-      getCenter($(this));
-
-        return false;
-      if (opts.loadvd) {
-        opts.loadvd($(this));
-        return true;
-      }
-
-
-
-      if (opts.ppscollcallbackVideo) {
-        opts.ppscollcallbackVideo();
-        return true;
-      }
-
-      if (opts.showbigimg) {
-        show_img(opts.showbigimg,$(this).attr("rel"),$(this));
-        return true;
-      }
-        
-      
-      
-
-      }
-    })
-    function  checkend(objsc) {
-      
-      if (objsc.prev().length < 1) {
-        arrow_prev.addClass("endprev");
-      }else {
-        arrow_prev.removeClass("endprev");
-      }
-
-      if (objsc.next().length < 1) {
-        arrow_next.addClass("endnext");
-      }else {
-        arrow_next.removeClass("endnext");
-      }
-
-    }
-
-    var ifload = false;
-    var ajax_load = $('#loading');
-  
-    var show_img = function (obj,data,objlink) {
-      var img = $('<img src="' + data + '" />');
-      //obj.hide().attr('src', data).fadeIn();
-      //console.log(img[0].complete);
-
-      ajax_load.show();
-      ifload = true;
-      
-      if (img[0].complete) {
-        if (opts.ppscollcallback) {
-          opts.ppscollcallback(obj,objlink);
-        }
-        obj.hide().attr('src', data).fadeIn();
-        ajax_load.hide();
-        ifload = false;
-
-      }else {
-        img.load(function  () {
-        if (opts.ppscollcallback) {
-          opts.ppscollcallback(obj,objlink);
-        }
-
-
-        obj.hide().attr('src', data).fadeIn();
-        
-        ajax_load.hide();
-        ifload = false;
-        }).error(function(){
-          ajax_load.hide();
-          alert('很抱歉,加载失败');
-          ifload = false;
-        });
-      }
-    }
-
-  });
-  var scolllong = obj.width() - obj.parents().width() - 10;
-  var that = $(this).parent().parent(); 
-  //滚动函数
-
-  var goscoll= true;
-  function scoll(dir,obj) {
-    /*
-    if (goscoll == false) {
-      return false;
-    }
-
-    goscoll = false;
-    */
-    var wid = $(window).width();
-    
-
-    if (dir=='right') {
-      if (gtras < (obj.find("li").length*(-140) + wid)) {
-        return false;
-      }
-      $("#imglist").css({
-        "transform" : "translateX("+ (gtras - 140) +"px)"
-      })
-      gtras = gtras - 140;
-      return false;
-      obj.animate({
-        scrollLeft:'+='+opts.long
-        //scrollLeft:longk-772
-      },function  () {
-        //console.log($(this).scrollLeft(),scolllong);
-        if ($(this).scrollLeft() > scolllong) {
-          that.find(".scrool-product-list-next").addClass("endnext");
-        }else {
-          
-          that.find(".scrool-product-list-next").removeClass("endnext");
-        }
-        that.find(".scrool-product-list-prev").removeClass("endprev");
-
-        if (opts.ppscollcallbackCount) {
-          opts.ppscollcallbackCount(obj,Math.abs(obj.scrollLeft()/opts.long));
-          return false;
-        }
-
-        goscoll = true;
-      });
-    }
-    if (dir=='left') {
-      if (gtras >= 0) {
-        return false;
-      }
-      $("#imglist").css({
-        "transform" : "translateX("+ (gtras + 140) +"px)"
-      })
-      gtras = gtras + 140;
-      return false;
-      obj.animate({
-        scrollLeft:'-='+opts.long
-        //scrollLeft:0
-      },function  () {
-        
-        if ($(this).scrollLeft() < 1) {
-          that.find(".scrool-product-list-prev").addClass("endprev");
-        }else {
-          
-          that.find(".scrool-product-list-prev").removeClass("endprev");
-        }
-        that.find(".scrool-product-list-next").removeClass("endnext");
-        if (opts.ppscollcallbackCount) {
-          opts.ppscollcallbackCount(obj,Math.abs(obj.scrollLeft()/opts.long));
-          return false;
-        }
-
-        goscoll = true;
-      });
-    }
-  }
-
-};
-
-})(jQuery);
 
 /** 
 * extend 表单控件自定义
@@ -1621,70 +1173,6 @@ $.fn.scollpic= function (options) {
 })(jQuery);
 
 
-
-
-/*-- boostroap 过渡效果
-use:
-$.support.transition && $parent.hasClass('fade') ?
-  $parent
-    .one('bsTransitionEnd', function(){})
-    .emulateTransitionEnd(350) :
-  function(){}
---*/
-
-
-+function ($) {
-  'use strict';
-
-  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
-  // ============================================================
-
-  function transitionEnd() {
-    var el = document.createElement('bootstrap')
-
-    var transEndEventNames = {
-      WebkitTransition : 'webkitTransitionEnd',
-      MozTransition    : 'transitionend',
-      OTransition      : 'oTransitionEnd otransitionend',
-      transition       : 'transitionend'
-    }
-
-    for (var name in transEndEventNames) {
-      if (el.style[name] !== undefined) {
-        return { end: transEndEventNames[name] }
-      }
-    }
-
-    return false // explicit for ie8 (  ._.)
-  }
-
-  // http://blog.alexmaccaw.com/css-transitions
-  $.fn.emulateTransitionEnd = function (duration) {
-    var called = false
-    var $el = this
-    $(this).one('bsTransitionEnd', function () { called = true })
-    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
-    setTimeout(callback, duration)
-    return this
-  }
-
-  $(function () {
-    $.support.transition = transitionEnd()
-
-    if (!$.support.transition) return
-
-    $.event.special.bsTransitionEnd = {
-      bindType: $.support.transition.end,
-      delegateType: $.support.transition.end,
-      handle: function (e) {
-        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
-      }
-    }
-  })
-
-}(jQuery);
-
-
 /*固定表格
 fixhead($(".fixhead"));
 <style type="text/css">
@@ -1704,22 +1192,16 @@ function fixhead(obj) {
       $(this).outerWidth($(this).outerWidth());
     obj.find("tr:eq(1) td:eq("+n+")").outerWidth($(this).outerWidth());
     if (n == obj.find("th").length-1) {
-      clonetb = obj.clone();
-      //clonetb.find("tr:eq(0)").siblings().remove();
-      
+      clonetb = obj.clone();      
       obj.wrap('<div class="fixhead-box"></div>');
       obj.wrap('<div class="fixhead-ct"></div>');
-      
-      
+            
       clonetb.insertBefore(obj.parent());
       clonetb.wrap('<div class="fixhead-hd"></div>');
       obj.find("tr").last().find("td").css("border-bottom","0");
     }
   })      
 }
-
-    
-
 
 /* 取随机颜色 */
 +function ($) {
@@ -1742,7 +1224,6 @@ function fixhead(obj) {
   }
   $(document).on('click', srand, Rand.prototype.rcolor);
 }(jQuery);
-
 
 
 /* 移动端版本兼容 */
@@ -1773,8 +1254,36 @@ function fixhead(obj) {
   }
   var newviewport = new Fixmobile();
 })();
+ 
+/*-- 层显示 --*/
+function blockShow(objIn, objOut, callBack) {
+  if (objOut == 'none') {
+    objIn.show();
+    objIn[0].offsetWidth;
+    objIn.addClass("in");
+  }else {
+    objOut.removeClass("in").one('bsTransitionEnd', function  () {
+    $(this).hide();
+    objIn.show();
+    $(this)[0].offsetWidth;
+    objIn.addClass("in");
+    if (callBack) {
+      callBack();
+    }
+    }).emulateTransitionEnd(350);
+  }
+}
 
-/*-- 表格copy --*/
+function blockHide(objOut, callBack) {
+  objOut.removeClass("in").one('bsTransitionEnd', function  () {
+  $(this).hide();
+  if (callBack) {
+    callBack();
+  }
+  }).emulateTransitionEnd(350);
+}
+
+/*-- 表格copy exl帮手 --*/
 $(document).ready(function() {
   $("#adress p").each(function(n){
     var gVal = $(this).html();
@@ -1793,17 +1302,14 @@ $(document).ready(function() {
       }
   })
 })
-  
 
-/*-- hovershow --*/
-function blockShow(objIn, callBack) {
-  $(".md-box.in").removeClass("in").one('bsTransitionEnd', function  () {
-    $(this).hide();
-    objIn.show();
-    $(this)[0].offsetWidth;
-    objIn.addClass("in");
-    if (callBack) {
-      callBack();
-    }
-  }).emulateTransitionEnd(350);
-}
+//移动监测动力
++function ($) {
+  'use strict';
+  if (!velocityPrevPosition) velocityPrevPosition = _this.touches.current;
+  if (!velocityPrevTime) velocityPrevTime = (new Date()).getTime();
+  _this.velocity = (_this.touches.current - velocityPrevPosition) / ((new Date()).getTime() - velocityPrevTime) / 2;
+  if (Math.abs(_this.touches.current - velocityPrevPosition) < 2) _this.velocity = 0;
+  velocityPrevPosition = _this.touches.current;
+  velocityPrevTime = (new Date()).getTime();
+}(jQuery);
