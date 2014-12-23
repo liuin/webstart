@@ -1256,32 +1256,45 @@ function fixhead(obj) {
 })();
  
 /*-- 层显示 --*/
-function blockShow(objIn, objOut, callBack) {
-  if (objOut == 'none') {
-    objIn.show();
-    objIn[0].offsetWidth;
-    objIn.addClass("in");
-  }else {
-    objOut.removeClass("in").one('bsTransitionEnd', function  () {
-    $(this).hide();
-    objIn.show();
-    $(this)[0].offsetWidth;
-    objIn.addClass("in");
++function ($) {
+  'use strict';
+   $.blockShow = function blockShow(objIn, objOut, callBack) {
+    if (!objOut) {
+      objIn.show();
+      objIn[0].offsetWidth;
+      objIn.addClass("in").one('bsTransitionEnd',function  () {
+        $(this).removeClass("in");
+      }).emulateTransitionEnd(220);
+    }else {
+      objOut.addClass("out").one('bsTransitionEnd', function  () {
+      $(this).hide().removeClass("out");
+      objIn.addClass('v-h').show();
+      objOut[0].offsetWidth;
+      //fix andord
+      setTimeout(
+        function(){
+          objIn.removeClass("v-h");
+        }, 10);
+      objIn.addClass("in").one('bsTransitionEnd',function  () {
+        $(this).removeClass("in");
+      }).emulateTransitionEnd(220);
+      if (callBack) {
+        callBack();
+      }
+      }).emulateTransitionEnd(220);
+    }
+  }
+
+  $.blockHide = function blockHide(objOut, callBack) {
+    objOut.addClass('out').one('bsTransitionEnd', function  () {
+    $(this).hide().removeClass("out");
+
     if (callBack) {
       callBack();
     }
     }).emulateTransitionEnd(350);
   }
-}
-
-function blockHide(objOut, callBack) {
-  objOut.removeClass("in").one('bsTransitionEnd', function  () {
-  $(this).hide();
-  if (callBack) {
-    callBack();
-  }
-  }).emulateTransitionEnd(350);
-}
+}(jQuery);
 
 /*-- 表格copy exl帮手 --*/
 $(document).ready(function() {
@@ -1303,6 +1316,7 @@ $(document).ready(function() {
   })
 })
 
+
 //移动监测动力
 +function ($) {
   'use strict';
@@ -1313,3 +1327,220 @@ $(document).ready(function() {
   velocityPrevPosition = _this.touches.current;
   velocityPrevTime = (new Date()).getTime();
 }(jQuery);
+
+
+/* ========================================================================
+滚动控制效果
+ */
++function ($) {
+  "use strict";
+  var scrollEffe = function  (groudEl) {
+    this.groudEl = groudEl;
+    this.$el = [];
+    this.$parentEl = [];
+    this.startPro = [];
+    for (var i = 0;  i<groudEl.length ; i++) {
+      this.$el[i] = groudEl[i][0];
+      this.$parentEl[i] = groudEl[i][1];
+      this.startPro[i] = groudEl[i][5];
+      this.initPosFun(this.$el[i],groudEl[i][2],groudEl[i][3],groudEl[i][4]);
+    }
+
+    this.initScroll();
+
+  }
+
+  scrollEffe.prototype.initPosFun =function  ($dom,tempX,tempY,type) {
+    if (!type) {
+      type = "moveblock";
+    }
+    tempX = tempX || 0;
+    tempY = tempY || 0;
+    $dom.data("endX",parseFloat($dom.css("left")));
+    $dom.data("startX",parseFloat($dom.css("left"))+tempX);
+    $dom.data("tempX",tempX);
+
+    $dom.data("endY",parseFloat($dom.css("top")));
+    $dom.data("startY",parseFloat($dom.css("top"))+tempY);
+    $dom.data("tempY",tempY);
+
+    $dom.css({"left":$dom.data("startX"),"top":$dom.data("startY")});
+  }
+
+  scrollEffe.prototype.posMoveFun = function($dom,$domParent,plong)
+  {
+      var permb = 0;
+      if (plong) {
+        permb = plong;
+      }else {
+        permb = 0;
+      }
+      //父级到窗口上边缘的距离
+      var tempY = $(document).scrollTop()-$domParent.position().top + permb;
+      var per = Math.max(-tempY/800,0);
+      var targetX = $dom.data("endX")+$dom.data("tempX")*per;
+      var targetY = $dom.data("endY")+$dom.data("tempY")*per;
+      $dom.css({"left":targetX,"top":targetY});
+  }
+
+
+  scrollEffe.prototype.opacity = function($dom,$domParent,ease)
+  {
+    //父级到窗口上边缘的距离
+    var tempY = $(document).scrollTop()-$domParent.position().top;
+    var opacity = Math.min(tempY*0.008,1);
+    $dom.css("opacity",opacity);
+  };
+
+  scrollEffe.prototype.scale = function($dom,$domParent,ease)
+  {
+    //父级到窗口上边缘的距离
+    var tempY = $(document).scrollTop()-$domParent.position().top + $(window).height()/2;
+
+    var scale = Math.min(tempY*0.003,1);
+    if (scale < 0) {
+      scale = 0
+    }
+    $dom.css("transform","scale(" + scale + ")");
+  };
+
+
+  scrollEffe.prototype.initScroll = function  () {
+    var $this = this;
+    $(window).bind("scroll",function(){
+      for (var i = 0;  i<$this.groudEl.length ; i++) {
+        switch ($this.groudEl[i][4]) {
+        case 'moveblock':
+          $this.posMoveFun($this.$el[i],$this.$parentEl[i],$this.startPro[i]);
+        break
+        case 'opacity':
+         $this.opacity($this.$el[i],$this.$parentEl[i]);
+        case 'scale':
+         $this.scale($this.$el[i],$this.$parentEl[i]);
+        break
+        default:
+        }
+           
+      }
+    })
+  }
+
+  $(document).ready(function() {
+      //控制模块
+      if ($('body.home').length > 0) {
+        var blockSilder = [
+          [$(".server-block1"),$("#server-container"),-700,-600-300,'moveblock'],
+          [$(".server-block2"),$("#server-container"),-1500,-600+300,'moveblock'],
+          [$(".server-block3"),$("#server-container"),0,500,'moveblock'],
+          [$(".server-block4"),$("#server-container"),300,-600-300,'moveblock'],
+          [$(".server-box-top"),$("#server-container"),0, -1200,'moveblock'],
+          [$(".advantage-ct-pk"),$("#advantage-container"),0.5, 1,'scale'],
+          [$(".advantage-cir-active"),$("#advantage-container"),-500, 0,'moveblock'],
+          [$(".advantage-cir-media"),$("#advantage-container"),0, -500,'moveblock'],
+          [$(".advantage-cir-design"),$("#advantage-container"),-300, 500,'moveblock'],
+          [$(".advantage-cir-power"),$("#advantage-container"),-300, -500,'moveblock'],
+          [$(".advantage-cir-brand"),$("#advantage-container"),300, -500,'moveblock'],
+          [$(".advantage-cir-res"),$("#advantage-container"),-300, 500,'moveblock'],
+          [$(".team-box-txt"),$("#team-container"),-600, 0,'moveblock'],
+          [$(".team-ld"),$("#team-container"),600, 0,'moveblock'],
+          [$(".news-list"),$("#news-container"),0, 700,'moveblock'],
+          [$(".contact-adress"),$("#contact-container"),-500, 0,'moveblock',500],
+          [$(".share-box"),$("#contact-container"),500, 0,'moveblock',500]
+        ]
+        var $serverBlock1 = new scrollEffe(blockSilder);
+      }
+  })
+}(jQuery);
+
+
+/** 
+* extend 无刷新加载
+* 
+*/
++(function($){
+  'use strict';
+  var ajax = null;
+  var urlLink = function  (el) {
+    this.$el = $(el);
+    this.url = $(el).attr("href");
+  }
+  urlLink.getDataHtml = function  (dataObj) {
+    var cotentData = dataObj.wrap('<div id="ct-wrap" class="ct-wrap"></div>');
+    cotentData = $("#ct-wrap").html();
+    dataObj.unwrap();
+    return cotentData;
+  }
+
+  urlLink.prototype.jump = function  () {
+    
+    var $this = this;
+    $.ajax({
+      type: "POST",
+      url: $this.url,
+      //dataType: 'json',
+      success: function(data){
+        $.blockHide($("#loading-wrap"));
+        var data = $(data);
+        var gTitle = null;
+        $(data).each(function (n) {
+
+          var findContainer = $(data)[n];
+          var container = $(findContainer);
+          if (container.is("title")) {
+            gTitle = $($(data)[n]).html();
+          }
+          if (container.hasClass("container")) {
+            $(".container").replaceWith(container);
+            return false;
+          }
+        })
+        document.title = gTitle;
+
+        var cotenData = urlLink.getDataHtml($(".container"));
+       
+        var state = {
+          url: $this.url,
+          title: document.title,
+          getHtml: cotenData
+        };
+        history.pushState(state,gTitle,$this.url);
+        ajax = true;
+      },
+      error:function  () {
+        $.blockHide($("#loading-wrap"));
+      },
+      beforeSend:function  () {
+        $.blockShow($("#loading-wrap"),'none');
+      }
+    });
+  }
+
+  $(document).ready(function() {
+    urlLink.currentState = {
+      url : document.location.href,
+      title :  document.title,
+      getHtml : $(".container")
+    }
+    $("body").on('click','[data-url="true"]',function  (e) {
+      e.preventDefault();
+      $(this).data("url",new urlLink(this));
+      $(this).data("url").jump();
+    })
+  })
+
+  window.addEventListener("popstate",function(event){
+    if(ajax == null){
+      return;
+    }else if(event && event.state){
+      console.log(event.state.getHtml);
+      var gcontent = $(event.state.getHtml);
+      $(".container").replaceWith(gcontent);
+      document.title = event.state.title;
+    }else{
+      document.title = urlLink.currentState.title;
+      $(".container").replaceWith(urlLink.currentState.getHtml);
+    }
+  });
+
+
+})(jQuery);
