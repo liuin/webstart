@@ -13,146 +13,167 @@
 -->
 
 <title>website name</title>
-<!-- <link rel="icon" href="images/favicon.ico">-->
-<!-- <link rel="stylesheet" href="css/reset.css" /> -->
 
-<!-- <link rel="stylesheet" href="css/animate.css" /> -->
-
-<!-- <link rel="stylesheet" href="css/bootstrap.css" /> -->
-<!-- <link rel="stylesheet" href="css/style.css" /> -->
 <link rel="stylesheet" href="css/style.css" />
-<!-- <script type="text/javascript" src="js/bootstrap.min.js"></script> -->
-<!-- <script type="text/javascript" src="js/bootstrap.min.js"></script> -->
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/script.js"></script>
-<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-   <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
 
-<!--[if lt IE 8]>
-  <link href="css/ie.css" rel="stylesheet" media="all" type="text/css" />
-<![endif]-->
-<!--[if IE 6]>
-  <script type="text/javascript" src="js/DD_belatedPNG_0.0.8a.js"></script>
-  <script type="text/javascript">
-    //<![CDATA[
-    DD_belatedPNG.fix('.png');
-    //]]></script>
-<![endif]-->
-<!--移动端版本兼容 -->  
-<script type="text/javascript">  
-  var phoneWidth = parseInt(window.screen.width);  
-  var phoneScale = phoneWidth / 640;  
-  var ua = navigator.userAgent;  
-  if (/Android (\d+\.\d+)/.test(ua)) {  
-  var version = parseFloat(RegExp.$1);  
-  if (version > 2.3) {  
-    document.write('<meta name="viewport" content="width=640, minimum-scale = ' + phoneScale + ', maximum-scale = ' + phoneScale + ', target-densitydpi=device-dpi">');  
-  } else {  
-    document.write('<meta name="viewport" content="width=640, target-densitydpi=device-dpi">');  
-  }  
-  } else {  
-  document.write('<meta name="viewport" content="width=640, user-scalable=no, target-densitydpi=device-dpi">');  
-  }  
-</script>  
-<style type="text/css">
-  .fixhead-box {width:800px; position:relative; border:1px solid #000;
-  }
-  .fixhead {width:800px;}
-  .fixhead td,.fixhead th{border-bottom:1px solid #000;border-left:1px solid #000;}
-
-  .fixhead-ct {height:170px; overflow:auto; overflow-x:hidden;}
-  .fixhead-ct .trhd {visibility:hidden; display:none;}
-  .fixhead-hd {height:22px; overflow:hidden; background:#fff; position:relative;}
-</style>
 </head>
 <body>
 <div class="wrap" style="width:640px; margin:0 auto;">
-<p id="p1" class="animated">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-<table class="fixhead none">
-  <tr class="trhd">
-    <th  >1</th>
-    <th  >2</th>
-    <th width="400">3</th>
-  </tr>
-  <tr>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-  </tr>
-  <tr>
-    <td>Lorem ipsum  Lorem ipsum Lorem ipsum</td>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum Lorem ipsum </td>
-  </tr>
-  <tr>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-  </tr>
-  <tr>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-  </tr>
-  <tr>
-    <td>Lorem ipsum  Lorem ipsum Lorem ipsum</td>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum Lorem ipsum </td>
-  </tr>
-  <tr>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-  </tr>
-  <tr>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-  </tr>
-  <tr>d-
-    <td>Lorem ipsum  Lorem ipsum Lorem ipsum</td>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum Lorem ipsum </td>
-  </tr>
-  <tr>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-    <td>Lorem ipsum </td>
-  </tr>
-</table>
-
+  <div class="animate-layer"></div>
 </div>
-<script type="text/javascript">
-<!--
-  $(document).ready(function() {
-    function fixhead(obj) {
-      var clonetb = '';
-      obj.find("th").each(function (n) {
-          $(this).outerWidth($(this).outerWidth());
-        obj.find("tr:eq(1) td:eq("+n+")").outerWidth($(this).outerWidth());
-        if (n == obj.find("th").length-1) {
-          clonetb = obj.clone();
-          //clonetb.find("tr:eq(0)").siblings().remove();
-          obj.wrap('<div class="fixhead-box"></div>');
-          obj.wrap('<div class="fixhead-ct"></div>');
-          
-          
-          clonetb.insertBefore(obj.parent());
-          clonetb.wrap('<div class="fixhead-hd"></div>');
-          obj.find("tr").last().find("td").css("border-bottom","0"); 
+<script type="text/javascript">  
+(function () {
+    var addEvent = function (t, c, tf) {
+        if (document.addEventListener) {
+            document.addEventListener(t, c, tf);
+        } else if (document.attachEvent) {
+            document.attachEvent('on' + t, c);
         }
-      })
     }
-    fixhead($(".fixhead"));
-  })
-//-->
-</script>
+    var app = {};
+    var js_canvas_box_id = 'js_theme_christmas_2014_canvas_snow', j;
+    var christmas_2014 = function () {
+        function r(a) {
+            return a * Math.random()
+        }
+
+        function s() {
+            return document.createElement("canvas")
+        }
+
+        function t() {
+            var a;
+            for (var d = 0; d < m; d++)a = d < m * .6 ? 0 : d < m * .8 ? 1 : d < m * .9 ? 2 : d < m * .98 ? 3 : 4, o[d] = [r(b), r(c), a]
+        }
+
+        function u() {
+            var a, d, e, f;
+            p += .01, d = Math.sin(p);
+            for (a = 0; a < m; a++) {
+                f = o[a], e = Math.sin(4 * p + a), f[1] += f[2] / 2 + (2 + e), f[0] += 6 * (d + e / 2) / (10 / f[2]), f[1] > c && (f[1] = -n, f[0] = r(b));
+                if (f[0] > b || f[0] < -n)d > 0 ? f[0] = -n : f[0] = b;
+                o[a] = f
+            }
+        }
+
+        function v() {
+            var a;
+            k.fillStyle = l, k.clearRect(0, 0, b, c), k.beginPath();
+            for (a = 0; a < m; a++) {
+                k.drawImage(i[o[a][2]], o[a][0], o[a][1]);
+            }
+
+            k.fill();
+            u();
+        }
+
+        function w(a) {
+            b = window.innerWidth,
+            c = window.innerHeight,
+            j !== undefined && (j.width = b, j.height = c, m = b * c / 6e3,
+            l = k.createLinearGradient(0, 0, 0, c), t())
+        }
+
+        function x() {
+            $(window).on('resize', function () {
+                christmas_2014.resizeHandler();
+            });
+            j = document.createElement("canvas");
+
+            j.style.position = "fixed";
+            j.style.top = "0px";
+            j.style.left = "0px";
+            j.style.pointerEvents = "none";
+            j.id = js_canvas_box_id;
+            document.querySelector(".animate-layer").appendChild(j);
+
+            k = j.getContext("2d");
+            k.strokeStyle = "none";
+            d = s(), e = s(), f = s(), g = s(), h = s(), i = [d, e, f, g, h];
+
+            y({
+                canvas: d,
+                width: n * .4,
+                height: n * .4,
+                color: "#FFF",
+                soft: .05
+            });
+
+            y({canvas: e, width: n * .5, height: n * .5, color: "#FFF", soft: .05});
+            y({
+                canvas: f,
+                width: n * .6,
+                height: n * .6,
+                color: "#FFF",
+                soft: .3
+            });
+            y({canvas: g, width: n * .8, height: n * .8, color: "#FFF", soft: .2}), y({
+                canvas: h,
+                width: n,
+                height: n,
+                color: "#FFF",
+                soft: .05
+            });
+
+            w(null);
+
+            app.snowTimer = setInterval(function () {
+                q(christmas_2014.draw)
+            }, 50);
+        }
+
+        function y(a) {
+            var b, c, d, e, f, g, h, i, j;
+            d = a.width || 30,
+                e = a.height || 30,
+                f = d / 2, g = e / 2,
+                i = a.color || "#FFF",
+                h = a.soft || 0, b = a.canvas, b.width = d, b.height = d, c = b.getContext("2d"), c.clearRect(0, 0, d, e), j = c.createRadialGradient(f, g, 0, f, g, f), j.addColorStop(0, i), j.addColorStop(.1, i), j.addColorStop(.85, z(i, h)), j.addColorStop(1, z(i, 0)), c.fillStyle = j, c.fillRect(0, 0, d, e)
+        }
+
+        function z(a, b) {
+            var c, d, e;
+            return a = a.replace(/^s*#|s*$/g, ""), a.length === 3 && (a = a.replace(/([0-9a-fA-F])/g, "$1$1")), d = parseInt(a.substr(2, 2), 16), e = parseInt(a.substr(4, 2), 16), c = parseInt(a.substr(0, 2), 16), "rgba(" + c + ", " + d + ", " + e + ", " + b + ")"
+        }
+
+        var b, c, d, e, f, g, h, i = [], j, k, l, m, n = 20, o = [], p = 0,
+            q = function () {
+                return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (a) {
+                    window.setTimeout(a, 62.5)
+                }
+            }();
+        return {
+            init: x,
+            draw: v,
+            stop: function () {
+                if (app.snowTimer) window.clearInterval(app.snowTimer);
+                if(j){
+                    j.parentNode.removeChild(j);
+                    j = false;
+                }
+            },
+            resizeHandler: w}
+    }();
+
+    if (!window['THEME_SCRIPT']) {
+        window['THEME_SCRIPT'] = {};
+    }
+    window['THEME_SCRIPT'].christmas_2014 = {
+        start: function () {
+            if($.browser.mozilla || $.browser.webkit || ($.browser.msie && $.browser.version > 9) || window.navigator.userAgent.indexOf('rv:11') != -1){
+                christmas_2014.init();
+            }
+        },
+        stop: function () {
+            if($.browser.mozilla || $.browser.webkit || ($.browser.msie && $.browser.version > 9) || window.navigator.userAgent.indexOf('rv:11') != -1){
+                christmas_2014.stop();
+            }
+        }
+    }
+    christmas_2014.init();
+})();
+</script>  
 </body>
 </html>
 
