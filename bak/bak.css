@@ -191,3 +191,5 @@ opacity: 1;
 
 
 .bgcolor {background: -webkit-gradient(linear, 0 0, 0 100%, from(red), to(blue));}
+
+.cssvmiddle{display: -webkit-box; -webkit-box-align: center; -webkit-box-pack: center;}
