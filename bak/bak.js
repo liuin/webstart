@@ -1267,14 +1267,13 @@ function fixhead(obj) {
       }).emulateTransitionEnd(220);
     }else {
       objOut.addClass("out").one('bsTransitionEnd', function  () {
-      $(this).hide().removeClass("out");
-      objIn.addClass('v-h').show();
-      objOut[0].offsetWidth;
-      //fix andord
-      setTimeout(
-        function(){
-          objIn.removeClass("v-h");
-        }, 10);
+
+      $(this).hide();
+      $(this)[0].offsetWidth;
+      $(this).removeClass("out");
+
+      objIn.show();
+      $(this)[0].offsetWidth;
       objIn.addClass("in").one('bsTransitionEnd',function  () {
         $(this).removeClass("in");
       }).emulateTransitionEnd(220);
@@ -1456,19 +1455,15 @@ $(document).ready(function() {
 /** 
 * extend 无刷新加载
 * 
+* @package jquery
+* @author cuki13
 */
 +(function($){
   'use strict';
   var ajax = null;
   var urlLink = function  (el) {
-    this.$el = $(el);
-    this.url = $(el).attr("href");
-  }
-  urlLink.getDataHtml = function  (dataObj) {
-    var cotentData = dataObj.wrap('<div id="ct-wrap" class="ct-wrap"></div>');
-    cotentData = $("#ct-wrap").html();
-    dataObj.unwrap();
-    return cotentData;
+    this.$el = $(el) || null;
+    this.url = $(el).attr("href") || null;
   }
 
   urlLink.prototype.jump = function  () {
@@ -1479,38 +1474,52 @@ $(document).ready(function() {
       url: $this.url,
       //dataType: 'json',
       success: function(data){
-        $.blockHide($("#loading-wrap"));
+       $.blockHide($("#loading-wrap"));
+        var cotenData = null;
         var data = $(data);
         var gTitle = null;
         $(data).each(function (n) {
-
           var findContainer = $(data)[n];
           var container = $(findContainer);
           if (container.is("title")) {
             gTitle = $($(data)[n]).html();
           }
           if (container.hasClass("container")) {
-            $(".container").replaceWith(container);
+            cotenData = findContainer.outerHTML;
+           
+            if ($.support.transition) {
+              $(".container").addClass("out").one('bsTransitionEnd',function  () {
+                $(".container").removeClass("out");
+                $(".container").replaceWith(container);
+                
+                container.addClass("in");
+                setTimeout(
+                  function(){
+                    container.removeClass("in");
+                  }, 320);
+              }).emulateTransitionEnd(320);
+            }else {
+              $(".container").replaceWith(container);
+            }
             return false;
           }
         })
         document.title = gTitle;
-
-        var cotenData = urlLink.getDataHtml($(".container"));
-       
         var state = {
           url: $this.url,
           title: document.title,
           getHtml: cotenData
         };
+
         history.pushState(state,gTitle,$this.url);
         ajax = true;
       },
       error:function  () {
+        alert('很抱歉加载失败，请重新刷新页面');
         $.blockHide($("#loading-wrap"));
       },
       beforeSend:function  () {
-        $.blockShow($("#loading-wrap"),'none');
+        $.blockShow($("#loading-wrap"));
       }
     });
   }
@@ -1519,8 +1528,10 @@ $(document).ready(function() {
     urlLink.currentState = {
       url : document.location.href,
       title :  document.title,
-      getHtml : $(".container")
+      getHtml : $(".container")[0].outerHTML
     }
+
+    //history.pushState(urlLink.currentState,document.title,location.href);
     $("body").on('click','[data-url="true"]',function  (e) {
       e.preventDefault();
       $(this).data("url",new urlLink(this));
@@ -1528,20 +1539,29 @@ $(document).ready(function() {
     })
   })
 
+
+
   window.addEventListener("popstate",function(event){
-    if(ajax == null){
-      return;
-    }else if(event && event.state){
-      console.log(event.state.getHtml);
+    if(event && event.state){
       var gcontent = $(event.state.getHtml);
       $(".container").replaceWith(gcontent);
+      $(".container").removeClass("out");
       document.title = event.state.title;
     }else{
+      if (ajax == null) {
+        return false;
+      }
       document.title = urlLink.currentState.title;
       $(".container").replaceWith(urlLink.currentState.getHtml);
+      $(".container").removeClass("out");
     }
   });
 
+ $.pUrl = function (url) {
+   var blink = new urlLink();
+   blink.url = url;
+   blink.jump();
+ }
 
 })(jQuery);
 
