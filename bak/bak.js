@@ -1723,3 +1723,40 @@ $(document).ready(function() {
     }
     christmas_2014.init();
 })();
+
+
+// 加入收藏夹
+function SetFavorite() {
+    var sTitle = document.title;
+    var sURL = document.location.href;
+    try {
+        window.external.addFavorite(sURL, sTitle);
+    } catch (e) {
+        try {
+            window.sidebar.addPanel(sTitle, sURL, "");
+        } catch (e) {
+            alert("加入收藏失败,请使用Ctrl+D进行添加.");
+        }
+    }
+}
+
+//设为首页
+function myhomepage() {
+    if (document.all) {
+        document.body.style.behavior = "url(#default#homepage)";
+        document.body.setHomePage('http://www.taiweifeng.com/');
+    }
+    else {
+        try {
+            netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+        }
+        catch (e) {
+            try { //Firefox
+                var prefs = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch);
+                prefs.setCharPref('browser.startup.homepage', pageURL);
+            } catch (e) {
+                alert("您的浏览器不支持该操作，请使用浏览器菜单手动设置.");
+            }
+        }
+    }
+}
