@@ -1859,3 +1859,50 @@ var sns_share = function(type, href, title, word, pic, uid){
 		setTimeout(function(){w}, 1000);		
 	}
 }
+
+/*等比例缩放图片*/
+function AutosizeImage(ImgD, maxwidth, maxheight) {
+    var image = new Image();
+    image.src = ImgD.src;
+    if (image.width > 0 && image.height > 0) {
+        flag = true;
+        if (image.width / image.height >= maxwidth / maxheight) {
+            if (image.width > maxwidth) {
+                ImgD.width = maxwidth;
+                ImgD.height = (image.height * maxwidth) / image.width;
+            } else {
+                ImgD.width = image.width;
+                ImgD.height = image.height;
+            }
+        }
+        else {
+            if (image.height > maxheight) {
+                ImgD.height = maxheight;
+                ImgD.width = (image.width * maxheight) / image.height;
+            } else {
+                ImgD.width = image.width;
+                ImgD.height = image.height;
+            }
+        }
+    }
+}
+
+/*-- cooki操作 --*/
+function addCookie(objName,objValue,objHours){
+var str = objName + "=" + escape(objValue);
+if(objHours > 0){
+  var date = new Date();
+  var ms = objHours*3600*1000;
+  date.setTime(date.getTime() + ms);
+  str += "; expires=" + date.toGMTString();
+}
+document.cookie = str;
+}
+
+function getCookie(objName){
+var arrStr = document.cookie.split("; ");
+for(var i = 0;i < arrStr.length;i ++){
+  var temp = arrStr[i].split("=");
+  if(temp[0] == objName) return unescape(temp[1]);
+} 
+}
