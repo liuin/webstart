@@ -24,6 +24,17 @@
   }
 }
 
+{
+  -webkit-animation-name: home-photo-tran; 
+  animation-name: home-photo-tran;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;   
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both; 
+  -webkit-animation-delay:1.5s; 
+  -webkit-animation-timing-function: linear;
+}
+
 
 /*-- loading --*/
 #loading {position:fixed;top:0;right:0;bottom:0; left:0; background:rgba(0, 0, 0, 0.5); *background:#fff;}
@@ -54,8 +65,6 @@ color: white;}
 .loading i {background: url("../images/icon_loader.gif") no-repeat 0 0;float: left; width: 24px; height: 24px; overflow: hidden; z-index:100;}
 .loading span {height: 24px; padding-left: 10px; line-height: 24px; font-size: 16px; color: white;}
 .loading-wrap {position:fixed;right:0;top:0;bottom:0;left:0; background: rgba(0, 0, 0, 0.68); z-index: 110;}
-
-
 
 /*-- 表单 placeholder --*/
 input:-moz-placeholder {  
@@ -193,3 +202,6 @@ opacity: 1;
 .bgcolor {background: -webkit-gradient(linear, 0 0, 0 100%, from(red), to(blue));}
 
 .cssvmiddle{display: -webkit-box; -webkit-box-align: center; -webkit-box-pack: center;}
+
+//弹性滚动条
+-webkit-overflow-scrolling:touch;
