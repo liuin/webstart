@@ -1943,7 +1943,8 @@ for(var i = 0;i < arrStr.length;i ++){
 		}
 	})
 
-//字符串插入","
+
+   //字符串插入","
     var gval = parseInt($("#result-number").data("number"));
     gval = parseInt((gval - Math.random()*100));
     

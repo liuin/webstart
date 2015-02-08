@@ -24,6 +24,17 @@
   }
 }
 
+{
+  -webkit-animation-name: home-photo-tran; 
+  animation-name: home-photo-tran;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;   
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both; 
+  -webkit-animation-delay:1.5s; 
+  -webkit-animation-timing-function: linear;
+}
+
 
 /*-- loading --*/
 #loading {position:fixed;top:0;right:0;bottom:0; left:0; background:rgba(0, 0, 0, 0.5); *background:#fff;}
@@ -54,8 +65,6 @@ color: white;}
 .loading i {background: url("../images/icon_loader.gif") no-repeat 0 0;float: left; width: 24px; height: 24px; overflow: hidden; z-index:100;}
 .loading span {height: 24px; padding-left: 10px; line-height: 24px; font-size: 16px; color: white;}
 .loading-wrap {position:fixed;right:0;top:0;bottom:0;left:0; background: rgba(0, 0, 0, 0.68); z-index: 110;}
-
-
 
 /*-- 表单 placeholder --*/
 input:-moz-placeholder {  
@@ -217,3 +226,11 @@ border:1px solid blue;
 .bgcolor {background: -webkit-gradient(linear, 0 0, 0 100%, from(red), to(blue));}
 
 .cssvmiddle{display: -webkit-box; -webkit-box-align: center; -webkit-box-pack: center;}
+
+//弹性滚动条
+-webkit-overflow-scrolling:touch;
+
+
+.item-ground {width: 100%; min-height: 44px; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-flex: 1; -ms-flex: 1; -webkit-box-pack: justify; -ms-flex-pack: justify; -webkit-justify-content: space-between; justify-content: space-between; -webkit-box-align: center; -ms-flex-align: center; -webkit-align-items: center; align-items: center; background:#fff; padding:10px; border-bottom:1px solid #c8c7cc;}
+.item-ground .count {-webkit-flex-shrink: 1; -ms-flex: 0 1 auto; flex-shrink: 1; white-space: nowrap; position: relative; overflow: hidden; text-overflow: ellipsis; max-width: 100%;width: 70px; -webkit-flex-shrink: 0; -ms-flex: 0 0 auto; flex-shrink: 0;}
+.item-ground .lab{width: 100%; margin-top: -8px; margin-bottom: -7px; -webkit-box-flex: 1; -ms-flex: 1; -webkit-flex-shrink: 1; -ms-flex: 0 1 auto; flex-shrink: 1;}
