@@ -189,6 +189,30 @@ opacity: 1;
   transition: opacity .15s linear;
 }
 
+div
+{
+display:-moz-box; /* Firefox */
+display:-webkit-box; /* Safari and Chrome */
+display:box;
+width:300px;
+border:1px solid black;
+}
+
+#p1
+{
+-moz-box-flex:2.0; /* Firefox */
+-webkit-box-flex:2.0; /* Safari and Chrome */
+box-flex:2.0;
+border:1px solid red;
+}
+
+#p2
+{
+-moz-box-flex:3.0; /* Firefox */
+-webkit-box-flex:3.0; /* Safari and Chrome */
+box-flex:3.0;
+border:1px solid blue;
+}
 
 .bgcolor {background: -webkit-gradient(linear, 0 0, 0 100%, from(red), to(blue));}
 

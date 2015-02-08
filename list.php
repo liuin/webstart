@@ -1,34 +1,14 @@
 <?php $page="home";$title="首页"; include("inc/header.php"); ?>
-<div class="container">
-  <table class="table">
-    <caption>Optional table caption.</caption>
-    <thead>
-      <tr>
-      <th>#</th>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Username</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-      <td>1</td>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-      </tr>
-      <tr>
-      <td>2</td>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-      </tr>
-      <tr>
-      <td>3</td>
-      <td>Larry</td>
-      <td>the Bird</td>
-      <td>@twitter</td>
-      </tr>
-    </tbody>
-  </table>
+<style type="text/css">
+  .cssvmiddle{display: -webkit-box; -webkit-box-align: center; -webkit-box-pack: justify; height:100px;}
+  .topced {position:relative;}
+  .topc {margin-top:30px; display:block; border:1px solid #000; }
+</style>
+<div class="topced">
+  <div class="topc">fdsdfdfs</div>
+</div>
+<div class="cssvmiddle">
+  <p>ioufoidasdfs fdsaiofudf1<br />fsfsfsdf</p>
+  <p>ioufoidasdfs fdsaiofudf2</p>
+  <p>ioufoidasdfs fdsaiofudf3</p>
 </div>
