@@ -85,7 +85,7 @@ input:-ms-input-placeholder {
 
 
 /*-- iframe --*/
-<iframe frameborder="0" vspace="0" hspace="0" style="padding: 0; margin: 0; border: 0; outline: none; vertical-align: top;" scrolling="no" width="458" height="428" src="http://192.168.0.168/mall/index.php/mg/index/query/"></iframe>
+<iframe frameborder="0" vspace="0" hspace="0" allowtransparency="true" style="padding: 0; margin: 0; border: 0; outline: none; vertical-align: top;" scrolling="no" width="458" height="428" src="http://192.168.0.168/mall/index.php/mg/index/query/"></iframe>
 
 
 /*-- 滚动条 --*/

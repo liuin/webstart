@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="js/avalon.js"></script>
+    </head>
+    <body>
+        <div ms-controller="test">
+            <div style=" background: #a9ea00;" ms-css-width="w" ms-css-height="h"  ms-click="click"></div>
+            <p>W: <input type="text" ms-duplex="aaa" data-duplex-event="change"/></p>
+            <p>H: <input type="text" ms-duplex="h" /></p>
+        </div>
+        <script>
+          var vmodel = avalon.define({
+             $id: "test", 
+             aaa: 111
+         })
+          vmodel.$watch("aaa", function(newValue, oldValue){
+               avalon.log(newValue) //222
+               avalon.log(oldValue) //111
+           })
+         setTimeout(function(){
+             //vmodel.aaa = 222
+         }, 1000)
+        </script>
+    </body>
+</html>

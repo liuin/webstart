@@ -1944,3 +1944,64 @@ for(var i = 0;i < arrStr.length;i ++){
 	})
 
 
+//滚动事件
+    $(document).ready(function() {
+      var startPos = 0;
+      var longpos = 0;
+      var wrapTop = 0;
+      var moveLeft = 0;
+      var moveX = 0;
+      var dirX = 0;
+      $(".search-list li").on('touchstart',function  (e) {
+        startPos = window.event.touches[0].pageY;
+        startPosX = window.event.touches[0].pageX;
+        dirX = 0;
+      })
+
+      $(".search-list li").on('touchmove',function  (e) {
+        e.preventDefault();
+       
+        
+        moveX =  window.event.touches[0].pageX - startPosX;
+        if (moveX < -20) {
+          $(this).css("-webkit-transform","translate3d("+ moveX +"px, 0, 0)");
+          $(this).css("transform","translate3d("+ moveX +"px, 0, 0)");
+          dirX = moveX;
+        }else {
+          longpos = startPos - window.event.touches[0].pageY;
+          $(".wrap-page").scrollTop(wrapTop + longpos);
+        }
+        
+      })
+
+      $(".search-list li").on('touchend',function  (e) {
+
+        e.preventDefault();
+        wrapTop = $(".wrap-page").scrollTop();
+        
+        
+        if (dirX < -100) {
+          //alert('del');
+          $(this).css({ "transition" : "0.4s"});
+          $(this).offset();
+          var gthis = $(this);
+          
+          $(this).css({ "-webkit-transform" : "translate3d("+ (-gthis.width())+"px, 0, 0)","height":"0px"});
+          $(this).css({ "transform" : "translate3d("+ (-gthis.width())+"px, 0, 0)","height":"0px"});
+          gthis.prev(".search-list-del").css({"height":"0px"});
+          setTimeout(
+            function(){
+              gthis.prev(".search-list-del").remove();
+              gthis.remove();
+              
+              
+            }, 500);
+
+          
+        }else {
+          $(this).css("-webkit-transform","translate3d(0px, 0, 0)");
+          $(this).css("transform","translate3d(0px, 0, 0)");
+        }
+      })
+ 
+    })
